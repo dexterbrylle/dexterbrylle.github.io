@@ -8,9 +8,9 @@ tags:			Jekyll Github
 image:			/assets/article_images/2015-08-28-Jekyll-on-Github-Pages/2H0QPGDVGZ.jpg
 ---
 
-I've been thinking about starting a blog again for quite some time now. However, I was too busy doing projects and the hassle of setting up a blog is a tedious (Hi WP!) task. I love Ghost and I think it's one of the best platforms out there right now, but I wanted to learn something new.
+I've been thinking about starting a blog again for quite some time now. However, I was too busy doing projects and the hassle of setting up a blog is a tedious (Hi WP!) task. I think Ghost is one of the best platforms out there right now, but I wanted to try and learn something new. Enter Jekyll.
 
-When I first heard and read about [Jekyll](http://jekyllrb.com/), I was intrigued with the idea of static files for my blog. Code embeds are natural. The fact that it's lightweight, a minimalist website is perfect. Also, I can use Github's web editor to write posts online and at the same time provide version control. Lastly, [Github](https://github.com) hosts Jekyll blogs [for __free__](https://pages.github.com/) which is just icing on the cake.
+When I first heard and read about [Jekyll](http://jekyllrb.com/), I was intrigued with the idea of static files for my blog. The fact that it's lightweight, a minimalist website is perfect. Also, I can use Github's web editor to write posts online and provide version control. Code embeds are natural as well. Lastly, [Github](https://github.com) hosts Jekyll blogs [for __free__](https://pages.github.com/) which wass just icing on the cake.
 
 Below you can find the quickest and easiest steps to deploy your own Jekyll blog.
 
@@ -19,6 +19,8 @@ Create a new repository and name it as _```yourusername.github.io```_, also don'
 ![](/assets/article_images/2015-08-28-Jekyll-on-Github-Pages/createrepo.JPG)
 
 After creating the repository, clone it to your local machine.
+
+![](/assets/article_images/2015-08-28-Jekyll-on-Github-Pages/clonerepo.JPG)
 
 _One user website is available per Github account (unlimited project/repository sites)._
 
