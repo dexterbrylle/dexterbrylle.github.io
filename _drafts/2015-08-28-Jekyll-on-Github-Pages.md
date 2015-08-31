@@ -22,7 +22,6 @@ After creating the repository, clone it to your local machine.
 
 ![](/assets/article_images/2015-08-28-Jekyll-on-Github-Pages/clonerepo.JPG)
 
-_One user website is available per Github account (unlimited project/repository sites)._
 
 ## Deploy a starting point
 There are several working demos of Jekyll blogs that you can use. Below are some of my favorite minimal themes:
@@ -30,7 +29,7 @@ There are several working demos of Jekyll blogs that you can use. Below are some
 > + [__Lanyon__](https://github.com/poole/lanyon)([Demo](http://lanyon.getpoole.com/))
 > + [__Poole__](https://github.com/poole/poole) ([Demo](http://demo.getpoole.com/))
 
-For this demo, we'll use [__Kactus__](https://github.com/nickbalestra/kactus), as it has the simplest configurations to get you started. So go ahead and [download](https://github.com/nickbalestra/kactus/archive/master.zip) it, extract it to your local repository and let's start customizing your blog.
+For this demo, we'll use [__Kactus__](https://github.com/nickbalestra/kactus), it has the simplest configurations to get you started. So go ahead and [download](https://github.com/nickbalestra/kactus/archive/master.zip) it, extract it to your local repository and let's start customizing your blog.
 
 ## Default Jekyll structure
 The initial structure of the Kactus repository:
@@ -50,3 +49,5 @@ about.md
 feed.xml
 index.html
 ```
+
+```config.yml```` contains all of your site configurations.
