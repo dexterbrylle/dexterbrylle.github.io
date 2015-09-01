@@ -1,7 +1,7 @@
 ---
 layout: 		post
 title:			"Sublime Text workflow and essential packages"
-date:			2015-09-01 02:12:00
+date:			2015-09-02 03:50:00
 description: 	My Sublime Text 3 workflow configuration
 categories:
 tags:	Sublime Text 3
