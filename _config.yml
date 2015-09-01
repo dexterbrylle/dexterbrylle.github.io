@@ -1,36 +1,24 @@
-# Build settings
 markdown: redcarpet
 highlighter: pygments
 gems:
   - jemoji
 
-# Site settings
 title: "DexterBrylle"
 description: > # this means to ignore newlines until "email:"
    Code. Hoops. Thoughts.
 
 email: dexterbrylle@gmail.com
 permalink: /:categories/:year/:title
-#blog logo
 logo: "/assets/images/db_logo.jpg"
-# blog cover
 cover: "/assets/images/IU6HNPC2NT.jpg"
-
 name: 'Dexter Brylle Matos'
 author: 'Dexter Brylle Matos'
 author_image: "/assets/images/avatar.png"
-
-paginate:	5
-
-url: "http://dexterbrylle.xyz" # the base hostname & protocol for your site
+paginate:	15
+url: "http://dexterbrylle.xyz"
 baseurl: ""
-#used to display twitter cards
 twitter_handle: '@dexterbrylle'
-
-#fill in disqus shortname to use disqus
 disqus: dexterbrylle
-
-# social icons and sharing options
 social:
   - icon:	twitter
     url:	https://twitter.com/dexterbrylle
@@ -38,21 +26,18 @@ social:
     share_url: http://twitter.com/share
     share_title: ?text=
     share_link: "&amp;url="
-
 #  - icon:	facebook
 #    url:	https://facebook.com/???
 #    desc: Connect with me facebook
 #    share_url: https://www.facebook.com/sharer.php
 #    share_title: ?t=
 #    share_link: "&amp;u="
-
   - icon:	github
     url:	https://github.com/dexterbrylle
     desc:	Fork me on github
     share_url:
     share_title:
     share_link:
-
 #  - icon:	google-plus
 #    url:	https://google.com/???
 #    desc:	Add me on google+
