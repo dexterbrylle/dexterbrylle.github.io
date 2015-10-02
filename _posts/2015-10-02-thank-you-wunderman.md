@@ -17,19 +17,20 @@ Two years ago, I did not know what to expect. I was expecting to just go about t
 
 So fast forward to today. After __countless sleepovers__, __loud Wunderbars__, and __fun Wunderweekends__, my deepest gratitude to everyone who made my stay here a memorable one. 
 
-## THANK YOU _Clave_, _Miss Chay_, and _EJ_ for giving me the opportunities to grow and succeed!
+THANK YOU _Clave_, _Miss Chay_, and _EJ_ for giving me the opportunities to grow and succeed!
 
-## THANK YOU WUNDERFRIENDS FOR TWO YEARS OF FULL OF ADVENTURES, LAUGHTER, AND AWESOMENESS!
+THANK YOU WUNDERFRIENDS FOR TWO YEARS OF FULL OF ADVENTURES, LAUGHTER, AND AWESOMENESS!
+
 
 ![ZZZZ!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-2.jpg "")
 ![Wunderweekends!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-3.jpg "")
 ![Wunderweekends!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-4.jpg "")
 ![Wunderweekends!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-5.jpg "")
-![Wunderweekends!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-7.jpg "")
+![DOTA Nights!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-7.jpg "")
 ![OTGANG!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-8.jpg "")
 
-# Thats it for me.
+# That's it for me.
 
-![Thank you Clave!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-6.jpg "")
+![](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-6.jpg "")
 
 > </ dex>
