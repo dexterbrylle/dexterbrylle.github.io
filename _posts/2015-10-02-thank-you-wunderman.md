@@ -23,6 +23,7 @@ THANK YOU WUNDERFRIENDS FOR TWO YEARS FULL OF ADVENTURES, LAUGHTER, AND AWESOMEN
 
 
 ![ZZZZ!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-2.jpg "")
+![Devs + Dianne & Erico](/assets/article_images/2015-10-02-thank-you-wunderman/11265473_3553656353139_1193000870636436740_o.jpg "")
 ![Wunderweekends!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-3.jpg "")
 ![Wunderweekends!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-4.jpg "")
 ![Wunderweekends!](/assets/article_images/2015-10-02-thank-you-wunderman/thank-you-wunderman-5.jpg "")
