@@ -11,3 +11,7 @@ If you would like to connect with me professionally you can shoot me an [email](
 Opinions are my own. Code snippets are open source.
 
 > “If you’re afraid to fail, then you’re probably going to fail.” – Kobe Bryant
+
+Dedicated pages:
+
+Thank you Wunderman - [link](http://blog.dexterbrylle.xyz/thank-you-wunderman)
