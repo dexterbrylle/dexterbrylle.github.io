@@ -1,7 +1,7 @@
 ---
 layout: 		post
 title:			"Show a MongoDB collection's schema via Shell"
-date:			2015-09-02 03:50:00
+date:			2016-01-18 02:50:00
 description: 	Show a MongoDB collection's schema via Shell
 categories:
 tags:	MongoDB
