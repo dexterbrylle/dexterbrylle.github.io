@@ -1,0 +1,158 @@
+.icon {
+    background-size: contain;
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    margin: .2em;
+    text-indent: -10000px
+}
+a:hover .icon {
+    -webkit-filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .1));
+    filter: drop-shadow(0 4px 0 rgba(0, 0, 0, .1))
+}
+.icon-twitter {
+    background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M89.2,0H10.8C4.8,0,0,4.8,0,10.8v78.4c0,6,4.8,10.8,10.8,10.8h78.4c6,0,10.8-4.8,10.8-10.8 V10.8C100,4.8,95.2,0,89.2,0z M80.5,36.3c0,0.6,0,1.3,0,1.9c0,19.4-14.7,41.7-41.7,41.7c-8.3,0-16-2.4-22.5-6.6 c1.1,0.1,2.3,0.2,3.5,0.2c6.9,0,13.2-2.3,18.2-6.3c-6.4-0.1-11.8-4.4-13.7-10.2c0.9,0.2,1.8,0.3,2.8,0.3c1.3,0,2.6-0.2,3.9-0.5 c-6.7-1.3-11.8-7.3-11.8-14.4c0-0.1,0-0.1,0-0.2c2,1.1,4.2,1.8,6.6,1.8c-3.9-2.6-6.5-7.1-6.5-12.2c0-2.7,0.7-5.2,2-7.4 c7.2,8.9,18,14.7,30.2,15.3c-0.2-1.1-0.4-2.2-0.4-3.3c0-8.1,6.6-14.7,14.7-14.7c4.2,0,8,1.8,10.7,4.6c3.3-0.7,6.5-1.9,9.3-3.6 c-1.1,3.4-3.4,6.3-6.4,8.1c3-0.4,5.8-1.1,8.4-2.3C85.8,31.6,83.4,34.2,80.5,36.3z"/></svg>');
+
+}
+.icon-rss {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><path fill="white" d="M33.198 73.487q0 3.67-2.57 6.24-2.568 2.568-6.238 2.568-3.67 0-6.24-2.57-2.568-2.568-2.568-6.238 0-3.67 2.57-6.238 2.568-2.57 6.238-2.57 3.67 0 6.24 2.57 2.568 2.56 2.568 6.23zm23.487 5.643q.092 1.284-.78 2.202-.826.963-2.156.963h-6.2q-1.15 0-1.977-.757t-.917-1.904q-1.01-10.505-8.464-17.96-7.455-7.454-17.96-8.463-1.147-.09-1.904-.91-.76-.822-.76-1.97v-6.2q0-1.33.963-2.154.78-.78 1.974-.78h.23q7.34.597 14.036 3.693 6.697 3.096 11.88 8.325 5.23 5.185 8.327 11.882 3.095 6.698 3.69 14.038zm23.487.092q.092 1.238-.825 2.156-.826.917-2.11.917h-6.56q-1.193 0-2.042-.803-.85-.802-.894-1.95-.55-9.862-4.63-18.74-4.08-8.875-10.62-15.412-6.53-6.537-15.41-10.62-8.873-4.083-18.74-4.68-1.142-.045-1.95-.894-.8-.848-.8-1.995v-6.56q0-1.28.92-2.11.826-.82 2.02-.82h.137q12.02.6 23.005 5.51 10.98 4.9 19.51 13.48 8.58 8.533 13.487 19.52 4.91 10.987 5.5 23.006zM87.082 0H8.68c-6 0-10.8 4.8-10.8 10.8v78.4c0 6 4.8 10.8 10.8 10.8h78.4c6 0 10.8-4.8 10.8-10.8V10.8c0-6-4.8-10.8-10.8-10.8z" /></svg>');
+}
+.icon-github {
+    background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path fill="white" d="M89.2,0H10.8C4.8,0,0,4.8,0,10.8v78.4c0,6,4.8,10.8,10.8,10.8h78.4c6,0,10.8-4.8,10.8-10.8V10.8 C100,4.8,95.2,0,89.2,0z M60.6,82.5c-1.7,0.3-2.3-0.7-2.3-1.6c0-1.1,0-4.7,0-9.2c0-3.1-1.1-5.1-2.3-6.2c7.4-0.8,15.2-3.6,15.2-16.5 c0-3.6-1.3-6.6-3.4-9c0.3-0.8,1.5-4.2-0.3-8.8c0,0-2.8-0.9-9.2,3.4c-2.7-0.7-5.5-1.1-8.4-1.1c-2.8,0-5.7,0.4-8.3,1.1 c-6.4-4.3-9.2-3.4-9.2-3.4c-1.8,4.6-0.7,8-0.3,8.8c-2.1,2.3-3.4,5.3-3.4,9c0,12.8,7.8,15.6,15.2,16.5c-1,0.8-1.8,2.3-2.1,4.5 c-1.9,0.9-6.7,2.3-9.7-2.8c0,0-1.8-3.2-5.1-3.4c0,0-3.3,0-0.2,2c0,0,2.2,1,3.7,4.9c0,0,2,6,11.2,3.9c0,2.8,0,5.4,0,6.2 c0,0.9-0.6,1.9-2.3,1.6c-13.2-4.4-22.8-16.9-22.8-31.6c0-18.4,14.9-33.3,33.3-33.3c18.4,0,33.3,14.9,33.3,33.3 C83.3,65.6,73.8,78,60.6,82.5z M41.5,71.5c0,0.3-0.2,0.5-0.6,0.6c-0.4,0.1-0.7-0.1-0.8-0.4c0-0.3,0.2-0.5,0.6-0.6 C41.1,71,41.5,71.2,41.5,71.5z M39,71.9c0,0.3-0.3,0.5-0.7,0.5c-0.4,0-0.7-0.2-0.7-0.5c0-0.3,0.3-0.5,0.7-0.5S39,71.6,39,71.9z M36.2,71.7c-0.1,0.3-0.5,0.4-0.8,0.3c-0.4-0.1-0.6-0.4-0.5-0.7c0.1-0.3,0.5-0.4,0.8-0.3C36.1,71.1,36.3,71.4,36.2,71.7z M33.8,70.6 c-0.2,0.2-0.6,0.1-0.9-0.1c-0.3-0.3-0.4-0.7-0.2-0.9c0.2-0.2,0.6-0.1,0.9,0.1C33.9,70.1,33.9,70.4,33.8,70.6z M32,68.8 c-0.2,0.1-0.5,0-0.7-0.3c-0.2-0.3-0.2-0.7,0-0.8c0.2-0.1,0.5,0,0.7,0.3C32.2,68.3,32.2,68.6,32,68.8z M30.6,66.9 c-0.2,0.1-0.5,0.1-0.7-0.2c-0.2-0.2-0.3-0.5-0.1-0.7c0.2-0.1,0.5-0.1,0.7,0.2C30.8,66.4,30.8,66.7,30.6,66.9z M29.3,65.4 c-0.1,0.2-0.3,0.2-0.6,0.1c-0.2-0.1-0.4-0.3-0.3-0.5c0.1-0.2,0.3-0.2,0.6-0.1C29.2,65,29.4,65.2,29.3,65.4z" /></svg>');
+}
+
+.icon-linkedin {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="300px" height="300px" viewBox="0 0 300 300" enable-background="new 0 0 300 300" xml:space="preserve"><g transform="translate(0.000000,300.000000) scale(0.100000,-0.100000)"><path fill="white" d="M343.999,2812.002C222.998,2770,155,2672.002,155,2540c0-62.002,5-85,27.998-132.998 c108.003-219.004,459.004-206.001,560,21.997c16.001,36.001,18.003,60,15,125c-5,97.002-27.998,146.001-91.997,203.003 C586.001,2827.002,453.999,2850,343.999,2812.002z"/> <path fill="white" d="M2035.996,2052.998c-150.996-31.997-257.998-92.998-365-210l-68.994-75l-7.002,79.004 c-5,42.998-10.996,100.996-14.004,127.998l-5.996,50l-253.999,2.998L1067.998,2030l6.001-62.002c3.003-35,8.999-452.998,12.002-930 L1092.998,170h288.003H1670l2.002,597.998C1675,1365,1675,1365,1697.998,1410.996c34.004,70,87.002,125.005,150,156.006 c75,36.997,192.998,38.999,257.998,5c59.004-31.001,111.006-95,137.002-172.002c21.006-64.004,22.002-77.002,25-647.002 L2270.996,170h290h290l-3.994,642.998c-2.998,547.998-6.006,652.002-20,707.002c-42.998,172.998-97.002,280-187.998,371.001 C2494.004,2037.998,2257.002,2101.001,2035.996,2052.998z"/><path fill="white" d="M167.002,2022.998c-4.004-2.998-7.002-421.997-7.002-930V170h295h295l-2.002,927.998L745,2025 l-286.001,2.998C302.002,2028.999,171.001,2027.002,167.002,2022.998z"/></g></svg>');
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased
+}
+body {
+    background-color: #fff;
+    box-sizing: border-box;
+    font-family: 'Roboto', Helvetica, Arial, sans-serif;
+    font-weight: 300;
+    min-height: 100%
+}
+a,
+a:link,
+a:visited {
+    color: #fff;
+    display: inline-block;
+    font-weight: 700;
+    text-decoration: none;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+    transition: transform .1s ease-out, text-shadow .1s ease-out, filter .1s ease-out;
+    transition: transform .1s ease-out, text-shadow .1s ease-out, filter .1s ease-out, -webkit-transform .1s ease-out, -webkit-filter .1s ease-out
+}
+a:hover {
+    -webkit-transform: translateY(-2px);
+    transform: translateY(-2px);
+    text-shadow: 0 4px 0 rgba(0, 0, 0, .1)
+}
+.panel-top,
+.panel-bottom {
+    -webkit-flex: 1 0 auto;
+    -ms-flex: 1 0 auto;
+    flex: 1 0 auto
+}
+.panel-bottom,
+.container {
+    background-color: #000;
+}
+.container {
+    width: 100%;
+    position: relative;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center
+}
+.container::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #fff;
+    width: 100%;
+    height: 6rem
+}
+.content {
+    position: relative;
+    width: 17rem;
+    color: rgba(255, 255, 255, .75);
+    font-size: 150%;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column
+}
+.about-text {
+    text-align: center
+}
+.avatar {
+    width: 128px;
+    height: 128px;
+    background: url(../img/avatar.jpg);
+    background-size: cover;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    -webkit-align-self: center;
+    -ms-flex-item-align: center;
+    align-self: center
+}
+ul {
+    margin-left: 10%;
+}
+.list-inline li {
+    list-style-type: none;
+    display: inline-block
+}
+@font-face {
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 300;
+    src: url(https://passy.me/fonts/RobotoCondensed-Light.eot);
+    src: local("Roboto Condensed Light"), local("RobotoCondensed-Light"), url(https://passy.me/fonts/RobotoCondensed-Light.eot) format("embedded-opentype"), url(https://passy.me/fonts/RobotoCondensed-Light.woff) format("woff")
+}
+@font-face {
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://passy.me/fonts/RobotoCondensed-Regular.eot);
+    src: local("Roboto Condensed Regular"), local("RobotoCondensed-Regular"), url(https://passy.me/fonts/RobotoCondensed-Regular.eot) format("embedded-opentype"), url(https://passy.me/fonts/RobotoCondensed-Regular.woff) format("woff")
+}
+@font-face {
+    font-family: 'Roboto Condensed';
+    font-style: normal;
+    font-weight: 700;
+    src: url(https://passy.me/fonts/RobotoCondensed-Bold.eot);
+    src: local("Roboto Condensed Regular"), local("RobotoCondensed-Bold"), url(https://passy.me/fonts/RobotoCondensed-Bold.eot) format("embedded-opentype"), url(https://passy.me/fonts/RobotoCondensed-Bold.woff) format("woff")
+}
+@font-face {
+    font-family: 'Roboto Condensed';
+    font-style: italic;
+    font-weight: 300;
+    src: url(https://passy.me/fonts/RobotoCondensed-LightItalic.eot);
+    src: local("Roboto Condensed Light Italic"), local("RobotoCondensed-LightItalic"), url(https://passy.me/fonts/RobotoCondensed-LightItalic.eot) format("embedded-opentype"), url(https://passy.me/fonts/RobotoCondensed-LightItalic.woff) format("woff")
+}
