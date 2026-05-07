@@ -227,11 +227,15 @@ h3 {
 }
 
 .prose {
-  padding-top: 2rem;
+  padding-top: 1rem;
 }
 
 .prose h2 {
-  margin-top: 2rem;
+  margin: 2rem 0 0.6rem;
+}
+
+.prose h3 {
+  margin: 1.5rem 0 0.5rem;
 }
 
 .prose p {

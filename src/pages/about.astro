@@ -18,56 +18,29 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </p>
     <p>
       My work spans multi-cloud environments (GCP, Azure, AWS), container orchestration,
-      and application security—with a foundation in microservices architecture and
+      and application security&mdash;with a foundation in microservices architecture and
       full-stack development.
     </p>
   </section>
 
   <section class="prose" aria-labelledby="experience-title">
-    <h2 id="experience-title">Experience</h2>
-
-    <div class="experience-item">
-      <h3>Site Reliability Engineer</h3>
-      <p class="exp-meta">Macquarie Group • February 2025 – Present</p>
-      <ul>
-        <li>Manage enterprise-wide Dynatrace Monaco (Configuration as Code) for banking and financial systems across multi-cloud environments</li>
-        <li>Designed and built ARV, an internal platform for intelligent service discovery and automated release verification using DQL and Davis AI</li>
-        <li>Develop and maintain the ARV Support Agent, a multi-agent AI system built with Google Agent Development Kit for release failure analysis</li>
-        <li>Design, provision, and maintain GCP ecosystem (GKE, Spanner, Pub/Sub, Vault, Vertex AI) using Terraform</li>
-        <li>Act as security liaison, owning Security Assessment Documents for production releases</li>
-      </ul>
-    </div>
-
-    <div class="experience-item">
-      <h3>Technical Lead / Senior Backend Engineer</h3>
-      <p class="exp-meta">Manulife IT Delivery Center Asia • June 2021 – September 2024</p>
-      <ul>
-        <li>Managed Azure cloud infrastructure for the MOVE fitness app, including AKS container orchestration and Key Vault secret management</li>
-        <li>Reduced production incidents by 95% through rigorous site reliability and engineering-led analysis</li>
-        <li>Eliminated deployment-related downtime by transitioning to Blue-Green deployment strategies</li>
-        <li>Acted as security liaison, performing SAST/DAST scanning with SonarQube, Snyk, and Burp Suite</li>
-        <li>Developed and maintained New Relic monitoring dashboards, alerts, and synthetic monitors</li>
-      </ul>
-    </div>
-
-    <div class="experience-item">
-      <h3>Expert Software Engineer</h3>
-      <p class="exp-meta">Finastra • February 2019 – August 2020</p>
-      <ul>
-        <li>Directed architecture transformation to Kotlin Multiplatform for internal banking applications</li>
-        <li>Maintained and enhanced Java, Angular, and DB2-based banking systems</li>
-        <li>Architected a company-wide ride-sharing platform and a Facebook Messenger chatbot</li>
-      </ul>
-    </div>
-
-    <div class="experience-item">
-      <h3>Lead Developer</h3>
-      <p class="exp-meta">Make Technology • February 2018 – January 2019</p>
-      <ul>
-        <li>Architected and led development of a yoga booking and certification web app for international clients</li>
-        <li>Optimized CI/CD pipelines and server environments, improving infrastructure reliability</li>
-      </ul>
-    </div>
+    <h2 id="experience-title">Career</h2>
+    <p>
+      Currently a Site Reliability Engineer in the banking and financial sector, managing
+      enterprise-wide observability through Dynatrace Monaco and designing internal platforms
+      for intelligent release verification powered by AI. I design, provision, and maintain
+      multi-cloud infrastructure using Terraform across GCP, Azure, and AWS, and serve as
+      the security liaison owning vulnerability assessments and compliance documentation for
+      production releases.
+    </p>
+    <p>
+      Previously, I led technical teams as a Technical Lead and Senior Backend Engineer,
+      managing cloud infrastructure for consumer fitness applications. There I drove down
+      production incidents by 95%, transitioned deployments to Blue-Green strategies to
+      eliminate downtime, and ran SAST/DAST security scanning programs. My earlier roles
+      included directing architecture transformations, building full-stack applications,
+      and developing internal tools and automation across startups and global enterprises.
+    </p>
   </section>
 
   <section class="prose" aria-labelledby="skills-title">
@@ -100,14 +73,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </div>
   </section>
 
-  <section class="prose" aria-labelledby="education-title">
-    <h2 id="education-title">Education</h2>
-    <p>
-      <strong>Bachelor of Science in Information Systems</strong><br />
-      De La Salle - College of Saint Benilde
-    </p>
-  </section>
-
   <section class="prose" aria-labelledby="contact-title">
     <h2 id="contact-title">Get In Touch</h2>
     <p>
@@ -120,43 +85,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <a href="https://github.com/dexterbrylle" rel="noreferrer">GitHub</a>
     </div>
   </section>
-
-  <section class="prose cv-section" aria-labelledby="cv-title">
-    <h2 id="cv-title">Download CV</h2>
-    <p>Get a complete overview of my experience, skills, and qualifications.</p>
-    <a href="/dexter-matos-cv-2026.pdf" class="cv-button" download>
-      <span class="cv-icon">↓</span>
-      <span>Download CV (PDF)</span>
-    </a>
-  </section>
 </BaseLayout>
 
 <style>
-  .experience-item {
-    margin-bottom: 2rem;
-  }
-
-  .experience-item h3 {
-    font-size: 1.15rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .exp-meta {
-    color: var(--muted);
-    font-size: 0.85rem;
-    margin: 0 0 0.75rem 0;
-  }
-
-  .experience-item ul {
-    margin: 0;
-    padding-left: 1.25rem;
-  }
-
-  .experience-item li {
-    margin-bottom: 0.4rem;
-    color: var(--muted);
-  }
-
   .skills-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -176,40 +107,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     color: var(--muted);
     font-size: 0.9rem;
     margin: 0;
-  }
-
-  .cv-section {
-    background: var(--accent-soft);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-top: 2rem;
-  }
-
-  .cv-section h2 {
-    margin-top: 0;
-  }
-
-  .cv-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--accent);
-    color: white !important;
-    padding: 0.75rem 1.25rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-    margin-top: 0.5rem;
-    transition: opacity 0.2s ease;
-  }
-
-  .cv-button:hover {
-    opacity: 0.9;
-  }
-
-  .cv-icon {
-    font-size: 1.2rem;
   }
 
   @media (max-width: 640px) {
