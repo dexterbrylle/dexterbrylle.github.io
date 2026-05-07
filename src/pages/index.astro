@@ -1,0 +1,52 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const posts = (await getCollection("blog"))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("en", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+---
+
+<BaseLayout>
+  <section class="intro" aria-labelledby="intro-title">
+    <p class="kicker">Personal notebook</p>
+    <h1 id="intro-title">Dexter Brylle</h1>
+    <p class="tagline">Software Engineer. Builder. Cybersecurity.</p>
+    <p class="profile">
+      I build dependable software and practical systems, with an interest in security,
+      infrastructure, and the craft of shipping useful things.
+    </p>
+    <div class="link-row" aria-label="Profile links">
+      <a href="https://github.com/dexterbrylle" rel="noreferrer">GitHub</a>
+      <a href="https://www.linkedin.com/in/dexterbrylle/" rel="noreferrer">LinkedIn</a>
+    </div>
+  </section>
+
+  <section class="post-list" aria-labelledby="latest-title">
+    <div class="section-heading">
+      <h2 id="latest-title">Latest Posts</h2>
+      <a href="/blog/">All posts</a>
+    </div>
+    {
+      posts.map((post) => (
+        <article class="post-item">
+          <div class="post-meta">
+            <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+            <span>{post.data.tags.join(" / ")}</span>
+          </div>
+          <h3>
+            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+          </h3>
+          <p>{post.data.description}</p>
+        </article>
+      ))
+    }
+  </section>
+</BaseLayout>
