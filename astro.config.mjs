@@ -1,7 +1,9 @@
 import { defineConfig } from "astro/config";
+import sitemap from "@astrojs/sitemap";
 import rehypeMermaid from "rehype-mermaid";
 
 export default defineConfig({
+  integrations: [sitemap()],
   site: "https://dexterbrylle.com",
   output: "static",
   markdown: {

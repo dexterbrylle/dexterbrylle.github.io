@@ -15,7 +15,7 @@ const formatDate = (date: Date) =>
 ---
 
 <BaseLayout
-  title="Writing | Dexter Brylle"
+  title="Technical Blog | SRE, Cloud Infrastructure & DevOps | Dexter Brylle"
   description="Notes on site reliability, security, infrastructure, and building dependable systems."
 >
   <section class="page-heading" aria-labelledby="writing-title">
@@ -32,7 +32,7 @@ const formatDate = (date: Date) =>
             <span>{post.data.tags.join(" / ")}</span>
           </div>
           <h2>
-            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            <a href={`/blog/${post.id.replace(/\.md$/, "")}/`}>{post.data.title}</a>
           </h2>
           <p>{post.data.description}</p>
         </article>
