@@ -1,20 +1,95 @@
 ---
-const { title = "Dexter Brylle", description = "Software Engineer. Builder. Cybersecurity." } =
-  Astro.props;
+const SITE = "https://dexterbrylle.com";
+const SITE_NAME = "Dexter Brylle";
+
+const {
+  title = SITE_NAME,
+  description = "Site Reliability Engineer with 13+ years in observability, cloud infrastructure, and building reliable systems.",
+  image = `${SITE}/og-image.svg`,
+  type = "website",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, SITE).href;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary SEO -->
     <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonical} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
     <link rel="icon" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/styles/global.css" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": `${SITE}/#website`,
+          url: SITE,
+          name: SITE_NAME,
+          description: description,
+        },
+        {
+          "@type": "Person",
+          "@id": `${SITE}/#person`,
+          name: "Dexter Brylle Matos",
+          givenName: "Dexter Brylle",
+          familyName: "Matos",
+          jobTitle: "Site Reliability Engineer",
+          url: SITE,
+          sameAs: [
+            "https://github.com/dexterbrylle",
+            "https://www.linkedin.com/in/dexterbrylle/",
+          ],
+        },
+        ...(type === "article" ? [{
+          "@type": "Article",
+          "@id": `${canonical}#article`,
+          headline: title,
+          description: description,
+          url: canonical,
+          author: { "@id": `${SITE}/#person` },
+        }] : []),
+        {
+          "@type": "WebPage",
+          "@id": `${canonical}#webpage`,
+          url: canonical,
+          name: title,
+          description: description,
+          isPartOf: { "@id": `${SITE}/#website` },
+          about: { "@id": `${SITE}/#person` },
+        },
+      ],
+    }).replace(/</g, "\\u003c")} />
   </head>
   <body>
     <div class="page-shell">

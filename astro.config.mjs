@@ -9,6 +9,30 @@ export default defineConfig({
       type: "shiki",
       excludeLangs: ["mermaid"],
     },
-    rehypePlugins: [rehypeMermaid],
+    rehypePlugins: [
+      [
+        rehypeMermaid,
+        {
+          mermaidConfig: {
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            theme: "base",
+            themeVariables: {
+              primaryColor: "#f6f0df",
+              primaryTextColor: "#2e2a25",
+              primaryBorderColor: "#7f342a",
+              lineColor: "#7f342a",
+              secondaryColor: "#f0e6db",
+              tertiaryColor: "#faf8f3",
+              background: "#faf8f3",
+              mainBkg: "#f6f0df",
+              secondBkg: "#f0e6db",
+              textColor: "#2e2a25",
+              fontFamily: "Georgia, 'Times New Roman', serif",
+            },
+          },
+          strategy: "inline-svg",
+        },
+      ],
+    ],
   },
 });

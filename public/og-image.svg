@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" aria-hidden="true">
+  <rect width="1200" height="630" fill="#2f2a24"/>
+  <rect x="40" y="40" width="1120" height="550" rx="12" fill="none" stroke="#f6f0df" stroke-width="2" opacity="0.15"/>
+  <text x="600" y="280" text-anchor="middle" font-family="system-ui, sans-serif" font-size="120" font-weight="700" fill="#f6f0df" letter-spacing="-3">Dexter Brylle</text>
+  <text x="600" y="360" text-anchor="middle" font-family="system-ui, sans-serif" font-size="32" fill="#f6f0df" opacity="0.6" letter-spacing="4">SITE RELIABILITY ENGINEER</text>
+  <line x1="460" y1="410" x2="740" y2="410" stroke="#f6f0df" stroke-width="1" opacity="0.2"/>
+  <text x="600" y="470" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" fill="#f6f0df" opacity="0.4">dexterbrylle.com</text>
+</svg>

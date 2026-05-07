@@ -18,7 +18,7 @@ flowchart TD
     A[Developer Push] --> B{CI/CD Check}
     B -->|Pass| C[Build Site]
     B -->|Fail| D[Notify Error]
-    C --> E[Deploy to GitHub Pages]
+    C --> E[Deploy to Cloudflare Pages]
     E --> F[Live Site]
     D --> G[Fix & Retry]
     G --> A
@@ -32,14 +32,14 @@ How a request flows through the stack:
 sequenceDiagram
     participant U as User
     participant C as Cloudflare
-    participant G as GitHub Pages
+    participant P as Cloudflare Pages
     participant A as Astro
 
     U->>C: HTTPS Request
-    C->>G: Forward Request
-    G->>A: Serve Static Files
-    A-->>G: HTML/CSS/JS
-    G-->>C: Response
+    C->>P: Forward Request
+    P->>A: Serve Static Files
+    A-->>P: HTML/CSS/JS
+    P-->>C: Response
     C-->>U: Cached Response
 ```
 

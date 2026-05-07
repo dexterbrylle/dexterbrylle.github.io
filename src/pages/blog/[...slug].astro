@@ -21,7 +21,11 @@ const formatDate = (date: Date) =>
   }).format(date);
 ---
 
-<BaseLayout title={`${post.data.title} | Dexter Brylle`} description={post.data.description}>
+<BaseLayout
+  title={`${post.data.title} | Dexter Brylle`}
+  description={post.data.description}
+  type="article"
+>
   <article class="entry">
     <header class="entry-header">
       <a class="back-link" href="/blog/">Back to writing</a>
