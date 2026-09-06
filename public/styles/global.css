@@ -53,9 +53,9 @@ code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size
 }
 .site-header { display: flex; align-items: center; gap: 2rem; min-height: 7rem; border-bottom: 1px solid var(--line); position: relative; }
 .site-mark { display: inline-flex; align-items: center; gap: .65rem; color: var(--ink); font-weight: 600; font-size: 1rem; white-space: nowrap; text-decoration: none; }
-.mark-symbol { display: grid; place-items: center; border: 1px solid var(--accent); width: 1.75rem; height: 1.75rem; color: var(--accent); font-size: 1.3rem; font-weight: 400; }
+.mark-symbol { display: grid; place-items: center; border: 1px solid var(--accent); width: 1.75rem; height: 1.75rem; color: var(--accent); font-size: 1.3rem; line-height: 1; font-weight: 400; }
 .desktop-nav { display: flex; align-items: center; justify-content: flex-end; gap: 1.3rem; flex: 1; }
-.desktop-nav a, .mobile-menu nav a { position: relative; display: flex; align-items: center; gap: .45rem; font-size: .925rem; color: var(--muted); text-decoration: none; white-space: nowrap; }
+.desktop-nav a, .mobile-menu nav a { position: relative; display: flex; align-items: center; gap: .55rem; font-size: .925rem; color: var(--muted); text-decoration: none; white-space: nowrap; }
 .nav-point { display: inline-block; flex-shrink: 0; width: .5rem; height: .5rem; border: 1px solid var(--muted); border-radius: 50%; }
 nav a[aria-current] { color: var(--accent); font-weight: 600; }
 nav a[aria-current] .nav-point { width: .6rem; height: .6rem; background: var(--accent); border: 2px solid var(--ground); outline: 1px solid var(--accent); }
@@ -174,7 +174,7 @@ main::before { content: ''; position: absolute; top: 0; bottom: 0; left: -.3rem;
 }
 @media (max-width: 900px) {
   .site-header { flex-wrap: wrap; padding-block: 1.5rem; gap: 1rem; }
-  .desktop-nav { flex-basis: 100%; justify-content: space-between; }
+  .desktop-nav { flex-basis: 100%; justify-content: flex-start; }
   .inventory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .waypoint-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .waypoint-card:nth-child(3) { border-left: 0; padding-left: 0; }
