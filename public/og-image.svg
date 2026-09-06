@@ -1,8 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" aria-hidden="true">
-  <rect width="1200" height="630" fill="#2f2a24"/>
-  <rect x="40" y="40" width="1120" height="550" rx="12" fill="none" stroke="#f6f0df" stroke-width="2" opacity="0.15"/>
-  <text x="600" y="280" text-anchor="middle" font-family="system-ui, sans-serif" font-size="120" font-weight="700" fill="#f6f0df" letter-spacing="-3">Dexter Brylle</text>
-  <text x="600" y="360" text-anchor="middle" font-family="system-ui, sans-serif" font-size="32" fill="#f6f0df" opacity="0.6" letter-spacing="4">SITE RELIABILITY ENGINEER</text>
-  <line x1="460" y1="410" x2="740" y2="410" stroke="#f6f0df" stroke-width="1" opacity="0.2"/>
-  <text x="600" y="470" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" fill="#f6f0df" opacity="0.4">dexterbrylle.com</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#F1EFE9"/>
+  <path d="M80 0v630M340 0v630M600 0v630M860 0v630M1120 0v630" stroke="#1F2A30" stroke-opacity=".08"/>
+  <path d="M80 72h1040M80 550h1040M105 72v478" stroke="#1F2A30" stroke-opacity=".2"/>
+  <path d="M105 170v310" stroke="#0E6160" stroke-width="2"/>
+  <circle cx="105" cy="170" r="7" fill="#0E6160"/>
+  <g font-family="Archivo, Arial, sans-serif">
+    <text x="145" y="179" font-size="16" letter-spacing="3" fill="#0E6160">SOFTWARE ENGINEER · BUILDER · CYBERSECURITY</text>
+    <text x="140" y="300" font-size="106" letter-spacing="-6" fill="#1F2A30">Dexter Brylle</text>
+    <text x="145" y="368" font-size="28" fill="#0E6160">Site Reliability Engineer</text>
+    <text x="145" y="432" font-size="24" fill="#57676E">Dependable software. Practical systems.</text>
+    <text x="145" y="590" font-size="18" fill="#57676E">dexterbrylle.com</text>
+  </g>
+  <path d="M1070 588v-22m-7 8 7-8 7 8" stroke="#57676E" fill="none" stroke-width="2"/>
 </svg>

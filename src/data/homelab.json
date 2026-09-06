@@ -1,0 +1,24 @@
+{
+  "title": "Homelab",
+  "kicker": "Lab status",
+  "description": "A place to chart the lab and its services.",
+  "telemetry": {
+    "label": "Live telemetry",
+    "state": "Coming soon",
+    "description": "Live status is not connected. No health claims are shown."
+  },
+  "inventoryTitle": "Inventory",
+  "emptyState": {
+    "kicker": "Route awaiting chart",
+    "title": "No services listed yet.",
+    "description": "The lab's services and their health will be charted here — what runs, and whether it is operational. The inventory appears as the lab is documented.",
+    "onward": { "label": "See the tools I work with", "href": "/stack/" }
+  },
+  "items": [],
+  "statusLabels": {
+    "unknown": "Not monitored",
+    "operational": "Operational",
+    "degraded": "Degraded",
+    "outage": "Outage"
+  }
+}

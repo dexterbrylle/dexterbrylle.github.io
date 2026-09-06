@@ -1,0 +1,12 @@
+{
+  "title": "Certifications",
+  "kicker": "Credentials",
+  "description": "A place for verified credentials.",
+  "emptyState": {
+    "kicker": "Route awaiting chart",
+    "title": "No credentials listed yet.",
+    "description": "A place for verified credentials — certifications, courses, and assessments, each with its issuing body and date. Entries appear here as they are documented.",
+    "onward": { "label": "See the experience behind them", "href": "/about/" }
+  },
+  "items": []
+}

@@ -1,0 +1,8 @@
+---
+import { contact, home } from "../data/site.json";
+interface Props { label?: string }
+const { label = home.contactLabel } = Astro.props;
+---
+<div class="link-row" aria-label={label}>
+  {contact.map(({ label, href }) => <a href={href} rel={href.startsWith("https:") ? "noreferrer" : undefined}>{label}</a>)}
+</div>

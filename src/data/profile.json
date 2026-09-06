@@ -1,0 +1,26 @@
+{
+  "title": "Profile",
+  "description": "Software, security, and reliability. The background and career of Dexter Brylle.",
+  "kicker": "The engineer",
+  "sections": [
+    {
+      "id": "summary",
+      "title": "Summary",
+      "paragraphs": [
+        "I'm a Site Reliability Engineer and Technical Lead with over 13 years of experience bridging software development and enterprise-scale infrastructure. I specialize in Observability-as-Code and AI-driven reliability, with a proven track record of reducing production incidents by 95% and automating complex CI/CD pipelines.",
+        "My work spans multi-cloud environments (GCP, Azure, AWS), container orchestration, and application security—with a foundation in microservices architecture and full-stack development."
+      ]
+    },
+    {
+      "id": "experience",
+      "title": "Career",
+      "paragraphs": [
+        "Currently a Site Reliability Engineer in the banking and financial sector, managing enterprise-wide observability through Dynatrace Monaco and designing internal platforms for intelligent release verification powered by AI. I design, provision, and maintain multi-cloud infrastructure using Terraform across GCP, Azure, and AWS, and serve as the security liaison owning vulnerability assessments and compliance documentation for production releases.",
+        "Previously, I led technical teams as a Technical Lead and Senior Backend Engineer, managing cloud infrastructure for consumer fitness applications. There I drove down production incidents by 95%, transitioned deployments to Blue-Green strategies to eliminate downtime, and ran SAST/DAST security scanning programs. My earlier roles included directing architecture transformations, building full-stack applications, and developing internal tools and automation across startups and global enterprises."
+      ]
+    }
+  ],
+  "contactTitle": "Get in touch",
+  "contactText": "Open to opportunities in site reliability engineering, cloud infrastructure, and security architecture. Let's talk about how I can help build and maintain your next system.",
+  "stackLabel": "Explore my stack"
+}

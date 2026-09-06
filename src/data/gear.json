@@ -1,0 +1,12 @@
+{
+  "title": "Gear",
+  "kicker": "Equipment",
+  "description": "A place for the equipment behind the work.",
+  "emptyState": {
+    "kicker": "Route awaiting chart",
+    "title": "No equipment listed yet.",
+    "description": "The physical tools behind the work — the hardware, peripherals, and setups I actually reach for — will be charted here. Entries appear as the inventory is documented.",
+    "onward": { "label": "See the tools I work with", "href": "/stack/" }
+  },
+  "items": []
+}

@@ -1,0 +1,22 @@
+---
+import { z } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import homelab from "../data/homelab.json";
+import { site } from "../data/site.json";
+const items = z.array(z.object({
+  name: z.string(),
+  description: z.string(),
+  status: z.enum(["unknown", "operational", "degraded", "outage"]),
+})).parse(homelab.items);
+---
+<BaseLayout title={`${homelab.title} | ${site.name}`} description={homelab.description}>
+  <header class="page-heading"><p class="kicker">{homelab.kicker}</p><h1>{homelab.title}</h1><p>{homelab.description}</p></header>
+  <section class="status-board" aria-labelledby="telemetry-title">
+    <div class="status-row"><h2 id="telemetry-title">{homelab.telemetry.label}</h2><span class="status-label" data-status="unknown">{homelab.telemetry.state}</span></div>
+    <p>{homelab.telemetry.description}</p>
+  </section>
+  <section class="chart-section" aria-labelledby="inventory-title">
+    <div class="section-heading"><h2 id="inventory-title">{homelab.inventoryTitle}</h2></div>
+    {items.length ? <div class="status-board">{items.map((item) => <article class="status-row"><div><h3>{item.name}</h3><p>{item.description}</p></div><span class="status-label" data-status={item.status}>{homelab.statusLabels[item.status]}</span></article>)}</div> : <div class="empty-state"><span class="empty-marker" aria-hidden="true">+</span><p class="kicker">{homelab.emptyState.kicker}</p><h2>{homelab.emptyState.title}</h2><p>{homelab.emptyState.description}</p><a class="empty-onward" href={homelab.emptyState.onward.href}>{homelab.emptyState.onward.label}</a></div>}
+  </section>
+</BaseLayout>

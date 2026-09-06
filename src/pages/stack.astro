@@ -1,0 +1,11 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import stack from "../data/stack.json";
+import { site } from "../data/site.json";
+---
+<BaseLayout title={`${stack.title} | ${site.name}`} description={stack.description}>
+  <header class="page-heading"><p class="kicker">{stack.kicker}</p><h1>{stack.title}</h1><p>{stack.description}</p></header>
+  <div class="inventory-grid">
+    {stack.categories.map((category) => <section class="inventory-card"><h2>{category.title}</h2><ul class="item-list">{category.items.map((item) => <li>{item}</li>)}</ul></section>)}
+  </div>
+</BaseLayout>

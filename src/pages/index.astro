@@ -1,55 +1,27 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-
-const posts = (await getCollection("blog"))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4);
-
-const formatDate = (date: Date) =>
-  new Intl.DateTimeFormat("en", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(date);
+import ContactLinks from "../components/ContactLinks.astro";
+import NoteList from "../components/NoteList.astro";
+import { site, home, waypoints } from "../data/site.json";
+const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 4);
 ---
-
-<BaseLayout
-  title="Dexter Brylle | SRE & Cloud Infrastructure | 13+ Years Experience"
-  description="Personal site of Dexter Brylle. Site Reliability Engineer with 13+ years in observability, cloud infrastructure, and AI-driven reliability."
->
+<BaseLayout title={home.title} description={home.description}>
   <section class="intro" aria-labelledby="intro-title">
-    <p class="kicker">Personal notebook</p>
-    <h1 id="intro-title">Dexter Brylle</h1>
-    <p class="tagline">Software Engineer. Builder. Cybersecurity.</p>
-    <p class="profile">
-      I build dependable software and practical systems, with an interest in security,
-      infrastructure, and the craft of shipping useful things.
-    </p>
-    <div class="link-row" aria-label="Profile links">
-      <a href="https://github.com/dexterbrylle" rel="noreferrer">GitHub</a>
-      <a href="https://www.linkedin.com/in/dexterbrylle/" rel="noreferrer">LinkedIn</a>
-    </div>
+    <p class="kicker origin-marker">{home.kicker}</p>
+    <h1 id="intro-title">{site.name}</h1>
+    <p class="tagline">{site.roleLine}</p>
+    <p class="profile">{site.statement}</p>
+    <ContactLinks />
   </section>
-
-  <section class="post-list" aria-labelledby="latest-title">
-    <div class="section-heading">
-      <h2 id="latest-title">Latest Posts</h2>
-      <a href="/blog/">All posts</a>
+  <section class="chart-section" aria-labelledby="recent-title">
+    <div class="section-heading"><h2 id="recent-title">{home.recentTitle}</h2><a href="/notes/">{home.allNotesLabel} <span aria-hidden="true">↗</span></a></div>
+    <NoteList posts={posts} headingLevel="h3" />
+  </section>
+  <section class="chart-section" aria-labelledby="waypoints-title">
+    <div class="section-heading"><h2 id="waypoints-title">{home.waypointsTitle}</h2></div>
+    <div class="waypoint-grid">
+      {waypoints.map((waypoint) => <a class="waypoint-card" href={waypoint.path}><h3>{waypoint.label}<span aria-hidden="true">↗</span></h3><p>{waypoint.description}</p></a>)}
     </div>
-    {
-      posts.map((post) => (
-        <article class="post-item">
-          <div class="post-meta">
-            <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
-            <span>{post.data.tags.join(" / ")}</span>
-          </div>
-          <h3>
-            <a href={`/blog/${post.id.replace(/\.md$/, "")}/`}>{post.data.title}</a>
-          </h3>
-          <p>{post.data.description}</p>
-        </article>
-      ))
-    }
   </section>
 </BaseLayout>

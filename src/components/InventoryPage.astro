@@ -1,0 +1,18 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../data/site.json";
+interface Props {
+  data: {
+    title: string;
+    kicker: string;
+    description: string;
+    emptyState: { kicker: string; title: string; description: string; onward: { label: string; href: string } };
+    items: { name: string; description: string; url?: string }[];
+  };
+}
+const { data } = Astro.props;
+---
+<BaseLayout title={`${data.title} | ${site.name}`} description={data.description}>
+  <header class="page-heading"><p class="kicker">{data.kicker}</p><h1>{data.title}</h1><p>{data.description}</p></header>
+  {data.items.length ? <div class="inventory-grid">{data.items.map((item) => <article class="inventory-card"><h2>{item.url ? <a href={item.url}>{item.name}</a> : item.name}</h2><p>{item.description}</p></article>)}</div> : <section class="empty-state"><span class="empty-marker" aria-hidden="true">+</span><p class="kicker">{data.emptyState.kicker}</p><h2>{data.emptyState.title}</h2><p>{data.emptyState.description}</p><a class="empty-onward" href={data.emptyState.onward.href}>{data.emptyState.onward.label}</a></section>}
+</BaseLayout>

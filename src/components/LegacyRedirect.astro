@@ -1,0 +1,11 @@
+---
+import { site, redirect } from "../data/site.json";
+interface Props { destination: string }
+const { destination } = Astro.props;
+const canonical = new URL(destination, `https://${site.domain}`).href;
+---
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width" /><title>{redirect.title} | {site.name}</title><meta name="robots" content="noindex" /><link rel="canonical" href={canonical} /><meta http-equiv="refresh" content={`0;url=${destination}`} /></head>
+  <body><main><h1>{redirect.title}</h1><p><a href={destination}>{redirect.label}</a></p></main></body>
+</html>

@@ -1,0 +1,66 @@
+{
+  "title": "Stack",
+  "description": "The tools I work with across cloud infrastructure, observability, software, and security.",
+  "kicker": "Working tools",
+  "categories": [
+    {
+      "title": "Cloud & Orchestration",
+      "items": [
+        "GCP",
+        "Azure",
+        "AWS",
+        "Kubernetes (GKE/AKS)",
+        "Docker"
+      ]
+    },
+    {
+      "title": "Observability & Monitoring",
+      "items": [
+        "Dynatrace (Monaco, DQL, Davis AI)",
+        "New Relic",
+        "Grafana",
+        "Prometheus",
+        "Datadog"
+      ]
+    },
+    {
+      "title": "DevOps & Automation",
+      "items": [
+        "GitHub Actions",
+        "Terraform",
+        "Bitbucket Pipelines",
+        "Jenkins",
+        "CI/CD"
+      ]
+    },
+    {
+      "title": "Languages & AI",
+      "items": [
+        "TypeScript/Node.js",
+        "Python",
+        "Go",
+        "Vertex AI",
+        "Google Agent Development Kit"
+      ]
+    },
+    {
+      "title": "Security",
+      "items": [
+        "Snyk",
+        "SonarQube",
+        "Burp Suite",
+        "HashiCorp Vault",
+        "SAST/DAST",
+        "Threat Modeling"
+      ]
+    },
+    {
+      "title": "Operating Systems",
+      "items": [
+        "Linux (Ubuntu, Debian)",
+        "Windows",
+        "macOS"
+      ]
+    }
+  ]
+}

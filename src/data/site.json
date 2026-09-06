@@ -1,0 +1,113 @@
+{
+  "site": {
+    "name": "Dexter Brylle",
+    "domain": "dexterbrylle.com",
+    "roleLine": "Site Reliability Engineer · Observability · Cloud · Security",
+    "statement": "I build dependable software and practical systems, with an interest in security, infrastructure, and the craft of shipping useful things.",
+    "email": "hi@dexterbrylle.com",
+    "fullName": "Dexter Brylle Matos",
+    "givenName": "Dexter Brylle",
+    "familyName": "Matos",
+    "jobTitle": "Site Reliability Engineer",
+    "description": "I build dependable software and practical systems, with an interest in security, infrastructure, and the craft of shipping useful things."
+  },
+  "nav": [
+    {
+      "label": "Home",
+      "path": "/"
+    },
+    {
+      "label": "Profile",
+      "path": "/about/"
+    },
+    {
+      "label": "Notes",
+      "path": "/notes/"
+    },
+    {
+      "label": "Gear",
+      "path": "/gear/"
+    },
+    {
+      "label": "Stack",
+      "path": "/stack/"
+    },
+    {
+      "label": "Certifications",
+      "path": "/certifications/"
+    },
+    {
+      "label": "Homelab",
+      "path": "/homelab/"
+    }
+  ],
+  "contact": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/dexterbrylle"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://www.linkedin.com/in/dexterbrylle/"
+    },
+    {
+      "label": "hi@dexterbrylle.com",
+      "href": "mailto:hi@dexterbrylle.com"
+    }
+  ],
+  "footer": {
+    "edition": "© 2026 dexterbrylle.com · Astro",
+    "contactLabel": "Contact links",
+    "scaleLabel": "Charting the course",
+    "northLabel": "North"
+  },
+  "waypoints": [
+    {
+      "label": "Gear",
+      "path": "/gear/",
+      "description": "Equipment inventory. Entries to come."
+    },
+    {
+      "label": "Stack",
+      "path": "/stack/",
+      "description": "The tools behind the work."
+    },
+    {
+      "label": "Certifications",
+      "path": "/certifications/",
+      "description": "A place for verified credentials. Entries to come."
+    },
+    {
+      "label": "Homelab",
+      "path": "/homelab/",
+      "description": "The lab chart. Live telemetry coming soon."
+    }
+  ],
+  "home": {
+    "title": "Dexter Brylle | Software, Security & Reliability",
+    "description": "I build dependable software and practical systems, with an interest in security, infrastructure, and the craft of shipping useful things.",
+    "kicker": "You are here",
+    "recentTitle": "Recent notes",
+    "allNotesLabel": "All notes",
+    "waypointsTitle": "Explore the chart",
+    "contactLabel": "Contact Dexter Brylle",
+    "identityLine": "Software Engineer. Builder. Cybersecurity."
+  },
+  "notes": {
+    "title": "Notes",
+    "description": "Working notes on software, systems, and security craft.",
+    "kicker": "The writing log",
+    "listLabel": "Published notes",
+    "backLabel": "Back to notes"
+  },
+  "redirect": {
+    "title": "This note has moved",
+    "label": "Continue to Notes"
+  },
+  "labels": {
+    "menu": "Menu",
+    "navigation": "Main navigation",
+    "skip": "Skip to content",
+    "north": "North"
+  }
+}

@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true">
-  <rect width="64" height="64" rx="6" fill="#f6f0df"/>
-  <text x="32" y="46" text-anchor="middle" font-family="system-ui, sans-serif" font-size="32" font-weight="700" fill="#2f2a24" letter-spacing="-1">DB</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" fill="#F1EFE9"/>
+  <path d="M16 49 48 17M23 17h25v25" fill="none" stroke="#0E6160" stroke-width="4"/>
+  <circle cx="16" cy="49" r="5" fill="#0E6160"/>
 </svg>
