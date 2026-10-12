@@ -6,10 +6,20 @@ export async function getStaticPaths() {
   return (await getCollection("blog")).map((post) => ({ params: { slug: post.id.replace(/\.md$/, "") }, props: { post } }));
 }
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const contents = headings.filter((heading) => heading.depth <= 3);
 const dateFormat = new Intl.DateTimeFormat("en", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
 ---
 <BaseLayout title={`${post.data.title} | ${site.name}`} description={post.data.description} type="article" publishedTime={post.data.pubDate.toISOString()} headline={post.data.title}>
+  <div class:list={["article-layout", { "has-contents": contents.length > 0 }]}>
+    {contents.length > 0 && <aside class="contents-rail">
+      <details open>
+        <summary>Contents</summary>
+        <nav aria-label="Article contents">
+          {contents.map((heading) => <a href={`#${heading.slug}`} data-depth={heading.depth}>{heading.text}</a>)}
+        </nav>
+      </details>
+    </aside>}
   <article class="entry">
     <header class="entry-header">
       <a class="back-link" href="/notes/">{notes.backLabel}</a>
@@ -18,4 +28,40 @@ const dateFormat = new Intl.DateTimeFormat("en", { month: "long", day: "numeric"
     </header>
     <div class="prose"><Content /></div>
   </article>
+  </div>
+  <script>
+    const rail = document.querySelector('.contents-rail');
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.contents-rail a'));
+    const sections = links.map((link) => ({ link, heading: document.getElementById(decodeURIComponent(link.hash.slice(1))) }));
+    if (rail && sections.length) {
+      const details = rail.querySelector('details');
+      const compact = matchMedia('(max-width: 760px)');
+      const adapt = () => { if (details) details.open = !compact.matches; };
+      adapt();
+      compact.addEventListener('change', adapt);
+      let current: HTMLAnchorElement | undefined;
+      const update = () => {
+        let active = sections[0];
+        for (const section of sections) {
+          if (section.heading && section.heading.getBoundingClientRect().top <= 90) active = section;
+        }
+        if (active && current !== active.link) {
+          for (const { link } of sections) link.removeAttribute('aria-current');
+          current = active.link;
+          current.setAttribute('aria-current', 'location');
+          if (!compact.matches) {
+            const bounds = rail.getBoundingClientRect();
+            const item = current.getBoundingClientRect();
+            if (item.top < bounds.top + 16) rail.scrollTop += item.top - bounds.top - 16;
+            else if (item.bottom > bounds.bottom - 16) rail.scrollTop += item.bottom - bounds.bottom + 16;
+          }
+        }
+      };
+      rail.addEventListener('click', (event) => {
+        if (event.target instanceof Element && event.target.closest('a') && compact.matches && details) details.open = false;
+      });
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    }
+  </script>
 </BaseLayout>

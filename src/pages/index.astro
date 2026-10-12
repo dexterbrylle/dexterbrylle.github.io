@@ -1,27 +1,18 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import ContactLinks from "../components/ContactLinks.astro";
 import NoteList from "../components/NoteList.astro";
-import { site, home, waypoints } from "../data/site.json";
+import { site, home } from "../data/site.json";
 const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 4);
 ---
 <BaseLayout title={home.title} description={home.description}>
   <section class="intro" aria-labelledby="intro-title">
-    <p class="kicker origin-marker">{home.kicker}</p>
-    <h1 id="intro-title">{site.name}</h1>
-    <p class="tagline">{site.roleLine}</p>
+    <h1 id="intro-title">Notes on software, systems, and security.</h1>
     <p class="profile">{site.statement}</p>
-    <ContactLinks />
+    <p class="author-note">Written by Dexter Brylle.</p>
   </section>
   <section class="chart-section" aria-labelledby="recent-title">
     <div class="section-heading"><h2 id="recent-title">{home.recentTitle}</h2><a href="/notes/">{home.allNotesLabel} <span aria-hidden="true">↗</span></a></div>
     <NoteList posts={posts} headingLevel="h3" />
-  </section>
-  <section class="chart-section" aria-labelledby="waypoints-title">
-    <div class="section-heading"><h2 id="waypoints-title">{home.waypointsTitle}</h2></div>
-    <div class="waypoint-grid">
-      {waypoints.map((waypoint) => <a class="waypoint-card" href={waypoint.path}><h3>{waypoint.label}<span aria-hidden="true">↗</span></h3><p>{waypoint.description}</p></a>)}
-    </div>
   </section>
 </BaseLayout>

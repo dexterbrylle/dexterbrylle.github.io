@@ -69,9 +69,9 @@ const graph = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
-    <meta name="theme-color" content="#F1EFE9" />
+    <meta name="theme-color" content="#fafaf9" />
     <link rel="icon" href="/favicon.svg" />
-    <link rel="preload" href="/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+
     <link rel="stylesheet" href="/styles/global.css" />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(graph).replace(/</g, "\\u003c")} />
   </head>
@@ -79,27 +79,27 @@ const graph = {
     <a class="skip-link" href="#main">{labels.skip}</a>
     <div class="page-shell">
       <header class="site-header">
-        <a class="site-mark" href="/"><span class="mark-symbol" aria-hidden="true">↗</span>{site.name}</a>
+        <a class="site-mark" href="/">{site.name}</a>
         <nav class="desktop-nav" aria-label={labels.navigation}>
           {nav.map((item) => <a href={item.path} aria-current={active(item.path) ? "page" : undefined}>
-            <span class="nav-point" aria-hidden="true"></span>{item.label}
+            {item.label}
           </a>)}
         </nav>
         <details class="mobile-menu">
           <summary>{labels.menu} <span aria-hidden="true">＋</span></summary>
           <nav aria-label={labels.navigation}>
             {nav.map((item) => <a href={item.path} aria-current={active(item.path) ? "page" : undefined}>
-              <span class="nav-point" aria-hidden="true"></span>{item.label}
+              {item.label}
             </a>)}
           </nav>
         </details>
       </header>
       <main id="main" tabindex="-1">
-        {type === "article" && <div class="reading-course" aria-hidden="true"><span></span></div>}
+
         <slot />
       </main>
       <footer class="site-footer">
-        <div class="chart-scale" aria-hidden="true"><span class="scale-bar"></span><span class="north-arrow">↑ N</span></div>
+
         <span class="edition">{footer.edition}</span>
         <nav class="footer-links" aria-label={footer.contactLabel}>
           {contact.map((link) => <a href={link.href}>{link.label}</a>)}
