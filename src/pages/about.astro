@@ -1,12 +1,13 @@
 ---
+import SpiralMark from "../components/SpiralMark.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ContactLinks from "../components/ContactLinks.astro";
 import profile from "../data/profile.json";
 import { site } from "../data/site.json";
 ---
 <BaseLayout title={`${profile.title} | ${site.name}`} description={profile.description}>
-  <header class="page-heading"><p class="kicker">{profile.kicker}</p><h1>{profile.title}</h1></header>
+  <header class="page-heading"><h1>{profile.title}</h1></header>
   {profile.sections.map((section) => <section class="prose chart-section" aria-labelledby={`${section.id}-title`}><h2 id={`${section.id}-title`}>{section.title}</h2>{section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
-  <p class="link-row"><a href="/stack/">{profile.stackLabel} <span aria-hidden="true">↗</span></a></p>
+  <p class="link-row"><a href="/stack/">{profile.stackLabel} <SpiralMark /></a></p>
   <section class="prose chart-section" aria-labelledby="contact-title"><h2 id="contact-title">{profile.contactTitle}</h2><p>{profile.contactText}</p><ContactLinks /></section>
 </BaseLayout>

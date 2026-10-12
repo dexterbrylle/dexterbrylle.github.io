@@ -46,12 +46,12 @@ const dateFormat = new Intl.DateTimeFormat("en", { month: "long", day: "numeric"
           if (section.heading && section.heading.getBoundingClientRect().top <= 90) active = section;
         }
         if (active && current !== active.link) {
-          for (const { link } of sections) link.removeAttribute('aria-current');
+          const bounds = !compact.matches ? rail.getBoundingClientRect() : null;
+          const item = bounds ? active.link.getBoundingClientRect() : null;
+          current?.removeAttribute('aria-current');
           current = active.link;
           current.setAttribute('aria-current', 'location');
-          if (!compact.matches) {
-            const bounds = rail.getBoundingClientRect();
-            const item = current.getBoundingClientRect();
+          if (bounds && item) {
             if (item.top < bounds.top + 16) rail.scrollTop += item.top - bounds.top - 16;
             else if (item.bottom > bounds.bottom - 16) rail.scrollTop += item.bottom - bounds.bottom + 16;
           }
@@ -60,7 +60,15 @@ const dateFormat = new Intl.DateTimeFormat("en", { month: "long", day: "numeric"
       rail.addEventListener('click', (event) => {
         if (event.target instanceof Element && event.target.closest('a') && compact.matches && details) details.open = false;
       });
-      window.addEventListener('scroll', update, { passive: true });
+      let pendingFrame = false;
+      window.addEventListener('scroll', () => {
+        if (pendingFrame) return;
+        pendingFrame = true;
+        requestAnimationFrame(() => {
+          pendingFrame = false;
+          update();
+        });
+      }, { passive: true });
       update();
     }
   </script>

@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import SpiralMark from "../components/SpiralMark.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import NoteList from "../components/NoteList.astro";
 import { site, home } from "../data/site.json";
@@ -10,9 +11,16 @@ const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueO
     <h1 id="intro-title">Notes on software, systems, and security.</h1>
     <p class="profile">{site.statement}</p>
     <p class="author-note">Written by Dexter Brylle.</p>
+    <p class="notebook-welcome">
+      <svg class="welcome-mark" viewBox="0 0 36 28" width="36" height="28" fill="none" aria-hidden="true">
+        <path d="M18 24V5M18 5C14 2 8 2 3 4V22C8 20 14 21 18 24C22 21 28 20 33 22V4C28 2 22 2 18 5" />
+        <path d="M7 9C10 8 13 9 14 10M7 14C10 13 13 14 14 15M22 10C25 9 28 8 29 9M22 15C25 14 28 13 29 14" />
+      </svg>
+      <span>Welcome to my notebook. Pick a note that catches your eye.</span>
+    </p>
   </section>
   <section class="chart-section" aria-labelledby="recent-title">
-    <div class="section-heading"><h2 id="recent-title">{home.recentTitle}</h2><a href="/notes/">{home.allNotesLabel} <span aria-hidden="true">↗</span></a></div>
+    <div class="section-heading"><h2 id="recent-title">{home.recentTitle}</h2><a href="/notes/">{home.allNotesLabel} <SpiralMark /></a></div>
     <NoteList posts={posts} headingLevel="h3" />
   </section>
 </BaseLayout>

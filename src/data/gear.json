@@ -5,8 +5,42 @@
   "emptyState": {
     "kicker": "Route awaiting chart",
     "title": "No equipment listed yet.",
-    "description": "The physical tools behind the work — the hardware, peripherals, and setups I actually reach for — will be charted here. Entries appear as the inventory is documented.",
-    "onward": { "label": "See the tools I work with", "href": "/stack/" }
+    "description": "The physical tools behind the work \u2014 the hardware, peripherals, and setups I actually reach for \u2014 will be charted here. Entries appear as the inventory is documented.",
+    "onward": {
+      "label": "See the tools I work with",
+      "href": "/stack/"
+    }
   },
-  "items": []
+  "items": [
+    {
+      "name": "Mac mini M4",
+      "category": "Desktop",
+      "description": "Base configuration, Apple M4.",
+      "image": "/images/gear/mini.webp"
+    },
+    {
+      "name": "MacBook Pro M3 Pro",
+      "category": "Laptop",
+      "description": "M3 Pro \u00b7 32 GB RAM \u00b7 1 TB SSD.",
+      "image": "/images/gear/laptop.webp"
+    },
+    {
+      "name": "NuPhy Node High Profile",
+      "category": "Keyboard",
+      "description": "High-profile keyboard.",
+      "image": "/images/gear/keyboard.webp"
+    },
+    {
+      "name": "MX Master 3S",
+      "category": "Mouse",
+      "description": "Logitech MX Master 3S.",
+      "image": "/images/gear/mouse.webp"
+    },
+    {
+      "name": "Audio Technica M40X BT",
+      "category": "Audio",
+      "description": "Audio Technica M40X BT headphones.",
+      "image": "/images/gear/headphones.webp"
+    }
+  ]
 }

@@ -1,5 +1,91 @@
 ---
-import InventoryPage from "../components/InventoryPage.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 import data from "../data/gear.json";
+import { site } from "../data/site.json";
 ---
-<InventoryPage data={data} />
+<BaseLayout title={`${data.title} | ${site.name}`} description={data.description}>
+  <header class="page-heading"><h1>{data.title}</h1><p>{data.description}</p></header>
+  <p class="gallery-note">Hover or focus to read; select an image for a closer look. Images are illustrative.</p>
+  <div class="gear-gallery">
+    {data.items.map((item) => <article class="gear-tile">
+      <a class="gear-image-link" href={item.image} aria-label={`Open image of ${item.name}`} aria-describedby={`description-${item.image.split('/').pop()}`}>
+        <span class="gear-flipper">
+          <span class="gear-front"><img src={item.image} alt={item.name} width="768" height="512" loading="lazy" /></span>
+          <span class="gear-back"><span>{item.category}</span><h2>{item.name}</h2><p id={`description-${item.image.split('/').pop()}`}>{item.description}</p><span class="image-action">Open image</span></span>
+        </span>
+      </a>
+      <h2 class="gear-caption">{item.name}</h2>
+      <p class="touch-description">{item.description}</p>
+    </article>)}
+  </div>
+  <dialog class="gear-viewer" aria-labelledby="viewer-title">
+    <button class="viewer-close" type="button" aria-label="Close image">Close</button>
+    <img class="viewer-image" src={data.items[0].image} alt={data.items[0].name} />
+    <h2 id="viewer-title"></h2>
+    <p>Illustrative image</p>
+  </dialog>
+  <script>
+    const viewer = document.querySelector<HTMLDialogElement>(".gear-viewer");
+    const image = viewer?.querySelector<HTMLImageElement>(".viewer-image");
+    const title = viewer?.querySelector("#viewer-title");
+    let opener: HTMLAnchorElement | undefined;
+    if (viewer && image && title) {
+      for (const link of document.querySelectorAll<HTMLAnchorElement>(".gear-image-link")) {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          opener = link;
+          image.src = link.href;
+          image.alt = link.querySelector("img")?.alt ?? "Gear";
+          title.textContent = image.alt;
+          viewer.showModal();
+          document.body.style.overflow = "hidden";
+        });
+      }
+      viewer.querySelector("button")?.addEventListener("click", () => viewer.close());
+      viewer.addEventListener("click", (event) => { if (event.target === viewer) {
+        const rect = viewer.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) viewer.close();
+      }});
+      viewer.addEventListener("close", () => { document.body.style.overflow = ""; opener?.focus(); });
+    }
+  </script>
+</BaseLayout>
+<style>
+  .gear-viewer { width: min(900px, calc(100% - 32px)); max-height: 90dvh; padding: 24px; border: none; border-radius: 12px; background: var(--ground); color: var(--ink); }
+  .gear-viewer::backdrop { background: rgb(0 0 0 / .75); }
+  .viewer-close { display: block; margin: 0 0 16px auto; min-height: 44px; padding: 8px 16px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 8px; cursor: pointer; font: inherit; }
+  .viewer-image { display: block; width: 100%; max-height: 65dvh; object-fit: contain; }
+  .gear-viewer h2 { margin-top: 16px; font-size: 1.2rem; }
+  .gear-viewer > p { color: var(--muted); font-size: .8rem; margin-top: 8px; }
+
+  .gallery-note { color: var(--muted); margin: -1rem 0 2rem; max-width: 65ch; }
+  .gear-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 36px 28px; }
+  .gear-tile { min-width: 0; }
+  .gear-image-link { display: block; perspective: 1200px; border-radius: 12px; }
+  .gear-flipper { display: grid; transform-style: preserve-3d; transition: transform 650ms cubic-bezier(.16,1,.3,1); }
+  .gear-front, .gear-back { grid-area: 1 / 1; backface-visibility: hidden; border-radius: 12px; overflow: hidden; }
+  .gear-front { aspect-ratio: 1; background: #f5f5f4; }
+  .gear-front img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  .gear-back { transform: rotateY(180deg); background: var(--surface); color: var(--ink); padding: clamp(18px, 2vw, 28px); display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+  .gear-back > span { font-size: .8rem; color: var(--muted); }
+  .gear-back h2 { font-size: 1.3rem; }
+  .gear-back p { font-size: .9rem; line-height: 1.55; }
+  .gear-back .image-action { margin-top: 8px; color: var(--ink); }
+  .gear-image-link:is(:hover, :focus-visible) .gear-flipper { transform: rotateY(180deg); }
+  .gear-caption { font-size: 1rem; margin-top: 14px; }
+  .touch-description { display: none; }
+  @media (max-width: 1000px) { .gear-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .gear-gallery { grid-template-columns: 1fr; } }
+  @media (hover: none) {
+    .gear-image-link:hover .gear-flipper { transform: none; }
+    .touch-description { display: block; color: var(--muted); font-size: .9rem; margin-top: 8px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .gear-flipper { transform-style: flat; }
+    .gear-front, .gear-back { backface-visibility: visible; }
+    .gear-back { transform: none; visibility: hidden; }
+    .gear-image-link:is(:hover, :focus-visible) .gear-flipper { transform: none; }
+    .gear-image-link:is(:hover, :focus-visible) .gear-back { visibility: visible; }
+    .gear-image-link:is(:hover, :focus-visible) .gear-front { visibility: hidden; }
+  }
+</style>

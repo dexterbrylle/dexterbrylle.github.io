@@ -6,6 +6,6 @@ import { notes, site } from "../../data/site.json";
 const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 <BaseLayout title={`${notes.title} | ${site.name}`} description={notes.description}>
-  <header class="page-heading"><p class="kicker">{notes.kicker}</p><h1>{notes.title}</h1><p>{notes.description}</p></header>
+  <header class="page-heading"><h1>{notes.title}</h1><p>{notes.description}</p></header>
   <section aria-label={notes.listLabel}><NoteList posts={posts} /></section>
 </BaseLayout>

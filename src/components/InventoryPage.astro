@@ -7,12 +7,43 @@ interface Props {
     kicker: string;
     description: string;
     emptyState: { kicker: string; title: string; description: string; onward: { label: string; href: string } };
-    items: { name: string; description: string; url?: string }[];
+    sampleNotice?: string;
+    items: { name: string; description: string; url?: string; sample?: boolean; category?: string }[];
   };
 }
 const { data } = Astro.props;
 ---
 <BaseLayout title={`${data.title} | ${site.name}`} description={data.description}>
-  <header class="page-heading"><p class="kicker">{data.kicker}</p><h1>{data.title}</h1><p>{data.description}</p></header>
-  {data.items.length ? <div class="inventory-grid">{data.items.map((item) => <article class="inventory-card"><h2>{item.url ? <a href={item.url}>{item.name}</a> : item.name}</h2><p>{item.description}</p></article>)}</div> : <section class="empty-state"><span class="empty-marker" aria-hidden="true">+</span><p class="kicker">{data.emptyState.kicker}</p><h2>{data.emptyState.title}</h2><p>{data.emptyState.description}</p><a class="empty-onward" href={data.emptyState.onward.href}>{data.emptyState.onward.label}</a></section>}
+  <header class="page-heading"><h1>{data.title}</h1><p>{data.description}</p></header>
+  {data.sampleNotice && <p class="sample-notice">{data.sampleNotice}</p>}
+  {data.items.length ? (
+    <div class:list={["inventory-grid", { "gear-sample-grid": data.items.some((item) => item.sample) }]}>
+      {data.items.map((item) => item.sample ? (
+        <details class="inventory-card gear-sample">
+          <summary>
+            <h2><span class="gear-sample-heading"><span>{item.name}</span><span class="gear-sample-meta">{item.category} · Sample</span></span><svg class="gear-sample-indicator" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></h2>
+          </summary>
+          <div class="gear-sample-detail"><p>{item.description}</p></div>
+        </details>
+      ) : (
+        <article class="inventory-card"><h2>{item.url ? <a href={item.url}>{item.name}</a> : item.name}</h2><p>{item.description}</p></article>
+      ))}
+    </div>
+  ) : (
+    <section class="empty-state"><h2>{data.emptyState.title}</h2><p>{data.emptyState.description}</p><a class="empty-onward" href={data.emptyState.onward.href}>{data.emptyState.onward.label}</a></section>
+  )}
 </BaseLayout>
+
+<style>
+  .gear-sample-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .sample-notice { max-width: 65ch; margin: -1.5rem 0 2.5rem; color: var(--muted); }
+  .gear-sample summary { cursor: pointer; list-style: none; }
+  .gear-sample summary::-webkit-details-marker { display: none; }
+  .gear-sample summary h2 { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: 0; }
+  .gear-sample-heading { display: grid; gap: .4rem; }
+  .gear-sample-meta { font-size: .7em; font-weight: 400; letter-spacing: 0; color: var(--muted); }
+  .gear-sample-indicator { flex-shrink: 0; }
+  .gear-sample-detail { padding-top: 1rem; }
+  .gear-sample-detail p { margin: 0; }
+  @media (max-width: 760px) { .gear-sample-grid { grid-template-columns: minmax(0, 1fr); } }
+</style>
