@@ -8,6 +8,7 @@ interface Props {
   type?: "website" | "article";
   publishedTime?: string;
   headline?: string;
+  noindex?: boolean;
 }
 
 const { site, nav, contact, footer, labels } = data;
@@ -19,6 +20,7 @@ const {
   type = "website",
   publishedTime,
   headline = title,
+  noindex = false,
 } = Astro.props;
 const pathname = `${Astro.url.pathname.replace(/\/$/, "")}/`;
 const canonical = new URL(pathname, origin).href;
@@ -53,7 +55,7 @@ const graph = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content={noindex ? "noindex, follow" : "index, follow"} />
     <link rel="canonical" href={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

@@ -13,7 +13,7 @@ interface Props {
 }
 const { data } = Astro.props;
 ---
-<BaseLayout title={`${data.title} | ${site.name}`} description={data.description}>
+<BaseLayout title={`${data.title} | ${site.name}`} description={data.description} noindex={data.items.length === 0}>
   <header class="page-heading"><h1>{data.title}</h1><p>{data.description}</p></header>
   {data.sampleNotice && <p class="sample-notice">{data.sampleNotice}</p>}
   {data.items.length ? (

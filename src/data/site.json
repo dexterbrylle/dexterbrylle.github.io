@@ -95,7 +95,7 @@
   },
   "notes": {
     "title": "Notes",
-    "description": "Working notes on software, systems, and security craft.",
+    "description": "Read Dexter Brylle's notes on software engineering, system reliability, security, and technical documentation, including architecture diagrams with Mermaid.",
     "kicker": "The writing log",
     "listLabel": "Published notes",
     "backLabel": "Back to notes"

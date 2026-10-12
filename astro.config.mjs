@@ -1,6 +1,8 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import rehypeMermaid from "rehype-mermaid";
+import certifications from "./src/data/certifications.json" with { type: "json" };
+import homelab from "./src/data/homelab.json" with { type: "json" };
 
 // rehype-mermaid emits <svg width="100%" style="max-width:<natural>px"> per diagram,
 // so a full-column CSS stretch both upscales small diagrams and squeezes wide ones.
@@ -45,7 +47,12 @@ function rehypeMermaidPanels() {
 }
 
 export default defineConfig({
-  integrations: [sitemap({ filter: (page) => !new URL(page).pathname.startsWith("/blog/") })],
+  integrations: [sitemap({ filter: (page) => {
+    const pathname = new URL(page).pathname;
+    return !pathname.startsWith("/blog/")
+      && !(pathname === "/certifications/" && certifications.items.length === 0)
+      && !(pathname === "/homelab/" && homelab.items.length === 0);
+  } })],
   site: "https://dexterbrylle.com",
   output: "static",
   markdown: {

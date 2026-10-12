@@ -5,7 +5,7 @@ import ContactLinks from "../components/ContactLinks.astro";
 import profile from "../data/profile.json";
 import { site } from "../data/site.json";
 ---
-<BaseLayout title={`${profile.title} | ${site.name}`} description={profile.description}>
+<BaseLayout title={`Site Reliability Engineer | ${site.fullName}`} description={profile.description}>
   <header class="page-heading"><h1>{profile.title}</h1></header>
   {profile.sections.map((section) => <section class="prose chart-section" aria-labelledby={`${section.id}-title`}><h2 id={`${section.id}-title`}>{section.title}</h2>{section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
   <p class="link-row"><a href="/stack/">{profile.stackLabel} <SpiralMark /></a></p>

@@ -9,7 +9,7 @@ const items = z.array(z.object({
   status: z.enum(["unknown", "operational", "degraded", "outage"]),
 })).parse(homelab.items);
 ---
-<BaseLayout title={`${homelab.title} | ${site.name}`} description={homelab.description}>
+<BaseLayout title={`${homelab.title} | ${site.name}`} description={homelab.description} noindex={items.length === 0}>
   <header class="page-heading"><h1>{homelab.title}</h1><p>{homelab.description}</p></header>
   <section class="status-board" aria-labelledby="telemetry-title">
     <div class="status-row"><h2 id="telemetry-title">{homelab.telemetry.label}</h2><span class="status-label" data-status="unknown">{homelab.telemetry.state}</span></div>
