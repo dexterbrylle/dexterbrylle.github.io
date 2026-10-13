@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import SpiralMark from "./SpiralMark.astro";
 interface Props { posts: CollectionEntry<"blog">[]; headingLevel?: "h2" | "h3" }
 const { posts, headingLevel: Heading = "h2" } = Astro.props;
 const dateFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
@@ -11,7 +12,7 @@ const dateFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric
         <time datetime={post.data.pubDate.toISOString()}>{dateFormat.format(post.data.pubDate)}</time>
         <span>{post.data.tags.join(" / ")}</span>
       </div>
-      <Heading><a href={`/notes/${post.id.replace(/\.md$/, "")}/`}>{post.data.title}</a></Heading>
+      <Heading><a class="title-link" href={`/notes/${post.id.replace(/\.md$/, "")}/`}><span>{post.data.title}</span><SpiralMark /></a></Heading>
       <p>{post.data.description}</p>
     </article>
   ))}

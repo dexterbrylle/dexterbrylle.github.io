@@ -4,10 +4,7 @@ import rehypeMermaid from "rehype-mermaid";
 import certifications from "./src/data/certifications.json" with { type: "json" };
 import homelab from "./src/data/homelab.json" with { type: "json" };
 
-// rehype-mermaid emits <svg width="100%" style="max-width:<natural>px"> per diagram,
-// so a full-column CSS stretch both upscales small diagrams and squeezes wide ones.
-// Render each at its native pixel size and let the .diagram panel scroll when the
-// column is narrower, keeping diagram text at design size on every viewport.
+// Preserve the SVG's natural dimensions so wider panels never shrink its labels.
 function rehypeMermaidPanels() {
   const isMermaid = (node) =>
     node?.type === "element" &&
@@ -34,7 +31,13 @@ function rehypeMermaidPanels() {
           parent.children[i] = {
             type: "element",
             tagName: "div",
-            properties: { class: "diagram" },
+            properties: {
+              class: "diagram",
+              ...(width ? { style: `--diagram-width: ${width}px` } : {}),
+              tabIndex: 0,
+              role: "region",
+              ariaLabel: "Diagram",
+            },
             children: [node],
           };
         } else if (node.children) {
@@ -50,6 +53,8 @@ export default defineConfig({
   integrations: [sitemap({ filter: (page) => {
     const pathname = new URL(page).pathname;
     return !pathname.startsWith("/blog/")
+      && pathname !== "/404/"
+      && pathname !== "/404.html"
       && !(pathname === "/certifications/" && certifications.items.length === 0)
       && !(pathname === "/homelab/" && homelab.items.length === 0);
   } })],
@@ -59,13 +64,17 @@ export default defineConfig({
     syntaxHighlight: {
       type: "shiki",
       excludeLangs: ["mermaid"],
-      theme: "github-light",
+    },
+    shikiConfig: {
+      themes: { light: "github-light-default", dark: "github-dark-default" },
+      defaultColor: false,
     },
     rehypePlugins: [
       [rehypeMermaid, {
+        css: new URL("./public/styles/fonts.css", import.meta.url),
         ...(process.env.MERMAID_BROWSER_CHANNEL ? { launchOptions: { channel: process.env.MERMAID_BROWSER_CHANNEL } } : {}),
         mermaidConfig: {
-          fontFamily: "system-ui, sans-serif",
+          fontFamily: "IBM Plex Sans, sans-serif",
           theme: "base",
           themeVariables: {
             primaryColor: "#F5F5F4",
@@ -78,7 +87,7 @@ export default defineConfig({
             mainBkg: "#F5F5F4",
             secondBkg: "#E7E5E4",
             textColor: "#1C1917",
-            fontFamily: "system-ui, sans-serif",
+            fontFamily: "IBM Plex Sans, sans-serif",
           },
         },
         strategy: "inline-svg",

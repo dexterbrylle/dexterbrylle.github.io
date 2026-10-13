@@ -1,0 +1,80 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SpiralMark from "../components/SpiralMark.astro";
+import { site } from "../data/site.json";
+
+const message = [
+  "### ##### #  ####    ###    ##### ####   ###  ####  #",
+  " #    #   # #       #   #     #   #   # #   # #   # #",
+  " #    #      ###    #####     #   ####  ##### ####  #",
+  " #    #         #   #   #     #   #  #  #   # #      ",
+  "###   #     ####    #   #     #   #   # #   # #      #",
+].join("\n");
+---
+<BaseLayout title={`404 | ${site.name}`} description="This page doesn't exist. Find your way back to Dexter Brylle's notes and projects." noindex>
+  <section class="not-found" aria-labelledby="lost-title">
+    <p class="lost-message">404. This page doesn't exist.</p>
+    <figure class="trap-stage" id="trap-animation" data-playing="false">
+      <img class="ackbar" src="/images/easter-eggs/ackbar-still.webp" data-animated-src="/images/easter-eggs/ackbar.gif" alt="Admiral Ackbar rendered as ASCII art." width="960" height="578" />
+      <pre class="trap-banner" aria-hidden="true">{message}</pre>
+    </figure>
+    <p class="trap-caption">A small warning from Admiral Ackbar.</p>
+    <p class="lost-recovery">The notes and projects are still here.</p>
+    <nav class="link-row escape-links" aria-label="Find your way back">
+      <a href="/">Back home <SpiralMark /></a>
+      <a href="/notes/">Read the notes <SpiralMark /></a>
+      <a href="/building/">See what I'm building <SpiralMark /></a>
+    </nav>
+  </section>
+</BaseLayout>
+
+<script>
+  const stage = document.querySelector<HTMLElement>(".trap-stage");
+  const image = document.querySelector<HTMLImageElement>(".ackbar");
+  const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  if (stage && image) {
+    const still = image.getAttribute("src");
+    const animated = image.dataset.animatedSrc;
+    if (still && animated) {
+      let visible = false;
+      const syncPlayback = () => {
+        const playing = !motion.matches && visible && !document.hidden;
+        stage.dataset.playing = String(playing);
+        const source = playing ? animated : still;
+        if (image.getAttribute("src") !== source) image.src = source;
+      };
+      motion.addEventListener("change", syncPlayback);
+      document.addEventListener("visibilitychange", syncPlayback);
+      new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+        syncPlayback();
+      }).observe(stage);
+      syncPlayback();
+    }
+  }
+</script>
+
+<style>
+  .not-found { max-width: 760px; margin: auto; padding-top: 64px; text-align: center; }
+  .not-found h1 { font-size: clamp(2.25rem, 4.5vw, 3rem); }
+  .lost-message { color: var(--muted); margin-top: 12px; }
+  .trap-stage { margin: 32px 0 0; overflow: hidden; background: #000; border-radius: 12px; container-type: inline-size; }
+  .ackbar { display: block; width: 100%; height: auto; }
+  .trap-banner { margin: 0; padding: 20px 12px 28px; color: #fff; background: #000; font-family: "IBM Plex Mono", monospace; font-size: clamp(0.45rem, 2.8cqw, 1rem); font-weight: 600; line-height: 1.2; text-align: center; white-space: pre; }
+  .trap-caption { margin-top: 10px; color: var(--muted); font-size: 0.8rem; text-align: left; }
+  .lost-recovery { margin-top: 32px; color: var(--muted); }
+  .escape-links { justify-content: center; gap: 8px 24px; margin-top: 14px; }
+  .escape-links a { display: inline-flex; align-items: center; min-height: 44px; }
+  @media (prefers-reduced-motion: no-preference) {
+    .trap-stage[data-playing="true"] .trap-banner { animation: trap-transmission 4.4s steps(51, end) infinite; }
+    @keyframes trap-transmission {
+      0%, 8% { clip-path: inset(0 100% 0 0); }
+      42%, 100% { clip-path: inset(0); }
+    }
+  }
+  @media (max-width: 760px) {
+    .not-found { padding-top: 40px; }
+    .trap-banner { padding: 16px 8px 20px; }
+    .trap-caption { font-size: 0.75rem; }
+  }
+</style>

@@ -14,31 +14,43 @@
   "nav": [
     {
       "label": "Home",
-      "path": "/"
-    },
-    {
-      "label": "Profile",
-      "path": "/about/"
+      "path": "/",
+      "primary": true
     },
     {
       "label": "Notes",
-      "path": "/notes/"
+      "path": "/notes/",
+      "primary": true
+    },
+    {
+      "label": "Building",
+      "path": "/building/",
+      "primary": true
+    },
+    {
+      "label": "Profile",
+      "path": "/about/",
+      "primary": true
     },
     {
       "label": "Gear",
-      "path": "/gear/"
+      "path": "/gear/",
+      "primary": false
     },
     {
       "label": "Stack",
-      "path": "/stack/"
+      "path": "/stack/",
+      "primary": false
     },
     {
       "label": "Certifications",
-      "path": "/certifications/"
+      "path": "/certifications/",
+      "primary": false
     },
     {
       "label": "Homelab",
-      "path": "/homelab/"
+      "path": "/homelab/",
+      "primary": false
     }
   ],
   "contact": [
@@ -56,7 +68,7 @@
     }
   ],
   "footer": {
-    "edition": "© 2026 dexterbrylle.com · Astro",
+    "edition": "© 2026 dexterbrylle.com",
     "contactLabel": "Contact links",
     "scaleLabel": "Charting the course",
     "northLabel": "North"
@@ -84,14 +96,16 @@
     }
   ],
   "home": {
-    "title": "Dexter Brylle | Software, Security & Reliability",
-    "description": "I build dependable software and practical systems, with an interest in security, infrastructure, and the craft of shipping useful things.",
+    "title": "Dexter Brylle | Notes & personal projects",
+    "description": "Dexter Brylle's working notebook and personal projects. Notes on software, systems, and security, alongside Fillo, Eave, and experiments in building useful things.",
     "kicker": "You are here",
     "recentTitle": "Recent notes",
     "allNotesLabel": "All notes",
     "waypointsTitle": "Explore the chart",
     "contactLabel": "Contact Dexter Brylle",
-    "identityLine": "Software Engineer. Builder. Cybersecurity."
+    "identityLine": "Software Engineer. Builder. Cybersecurity.",
+    "headline": "Notes and things I'm building.",
+    "authorLine": "I'm Dexter Brylle, a software and security engineer."
   },
   "notes": {
     "title": "Notes",
@@ -109,5 +123,9 @@
     "navigation": "Main navigation",
     "skip": "Skip to content",
     "north": "North"
+  },
+  "building": {
+    "title": "Building",
+    "description": "Personal projects and experiments. Small, focused apps built for the everyday things I care about."
   }
 }

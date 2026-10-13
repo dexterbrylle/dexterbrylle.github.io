@@ -37,7 +37,8 @@ const dateFormat = new Intl.DateTimeFormat("en", { month: "long", day: "numeric"
     if (rail && sections.length) {
       const details = rail.querySelector('details');
       const compact = matchMedia('(max-width: 760px)');
-      const adapt = () => { if (details) details.open = !compact.matches; };
+      const hasDiagrams = Boolean(document.querySelector('.entry .diagram'));
+      const adapt = () => { if (details) details.open = !compact.matches && !hasDiagrams; };
       adapt();
       compact.addEventListener('change', adapt);
       let current: HTMLAnchorElement | undefined;
@@ -47,7 +48,7 @@ const dateFormat = new Intl.DateTimeFormat("en", { month: "long", day: "numeric"
           if (section.heading && section.heading.getBoundingClientRect().top <= 90) active = section;
         }
         if (active && current !== active.link) {
-          const bounds = !compact.matches ? rail.getBoundingClientRect() : null;
+          const bounds = !compact.matches && !hasDiagrams ? rail.getBoundingClientRect() : null;
           const item = bounds ? active.link.getBoundingClientRect() : null;
           current?.removeAttribute('aria-current');
           current = active.link;
@@ -59,7 +60,7 @@ const dateFormat = new Intl.DateTimeFormat("en", { month: "long", day: "numeric"
         }
       };
       rail.addEventListener('click', (event) => {
-        if (event.target instanceof Element && event.target.closest('a') && compact.matches && details) details.open = false;
+        if (event.target instanceof Element && event.target.closest('a') && (compact.matches || hasDiagrams) && details) details.open = false;
       });
       let pendingFrame = false;
       window.addEventListener('scroll', () => {

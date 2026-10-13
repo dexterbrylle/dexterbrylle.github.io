@@ -1,0 +1,13 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectList from "../../components/ProjectList.astro";
+import SpiralMark from "../../components/SpiralMark.astro";
+import { building, site } from "../../data/site.json";
+const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
+---
+<BaseLayout title={`Personal projects & experiments | ${site.name}`} description={building.description}>
+  <header class="page-heading"><h1>{building.title}</h1><p>{building.description}</p></header>
+  <section aria-label="Personal projects"><ProjectList projects={projects} /></section>
+  <p class="building-onward">More experiments and code on <a href="https://github.com/dexterbrylle">GitHub <SpiralMark /></a></p>
+</BaseLayout>

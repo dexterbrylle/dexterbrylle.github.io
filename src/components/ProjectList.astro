@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from "astro:content";
+import SpiralMark from "./SpiralMark.astro";
+
+interface Props {
+  projects: CollectionEntry<"projects">[];
+  compact?: boolean;
+  headingLevel?: "h2" | "h3";
+}
+const { projects, compact = false, headingLevel: Heading = "h2" } = Astro.props;
+---
+<div class:list={["project-list", { "project-list-compact": compact }]}>
+  {projects.map((project) => (
+    <article class="project-item">
+      {!compact && project.data.preview && <a class="project-preview" href={`/building/${project.id.replace(/\.md$/, "")}/`} tabindex="-1">
+        <img src={project.data.preview.src} alt={project.data.preview.alt} width="1200" height="630" loading="lazy" />
+      </a>}
+      <div class="project-identity">
+        {project.data.icon && <img class="project-icon" src={project.data.icon} alt="" width="48" height="48" loading="lazy" />}
+        <div>
+          <Heading><a class="title-link" href={`/building/${project.id.replace(/\.md$/, "")}/`}><span>{project.data.title}</span><SpiralMark /></a></Heading>
+          <p class="project-status">{project.data.status}</p>
+        </div>
+      </div>
+      <p class="project-description">{project.data.description}</p>
+      {!compact && <p class="project-tags">{project.data.tags.join(" / ")}</p>}
+      <div class="project-actions">
+        <a class="project-link" href={`/building/${project.id.replace(/\.md$/, "")}/`}>About {project.data.title} <SpiralMark /></a>
+        {project.data.links.slice(0, 1).map((link) => <a class="project-link" href={link.href}>{link.label} <SpiralMark /></a>)}
+      </div>
+    </article>
+  ))}
+</div>

@@ -1,0 +1,27 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SpiralMark from "../../components/SpiralMark.astro";
+import { site } from "../../data/site.json";
+
+export async function getStaticPaths() {
+  return (await getCollection("projects")).map((project) => ({ params: { slug: project.id.replace(/\.md$/, "") }, props: { project } }));
+}
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+<BaseLayout title={`${project.data.title} | ${site.name}`} description={project.data.description} image={project.data.preview ? new URL(project.data.preview.src, Astro.site).href : undefined}>
+  <article class="project-entry">
+    <header class="entry-header">
+      <a class="back-link" href="/building/">Back to building</a>
+      <h1>{project.data.title}</h1>
+      <p>{project.data.description}</p>
+      <p class="project-facts"><span>{project.data.status}</span><span>{project.data.tags.join(" / ")}</span></p>
+      <div class="link-row">
+        {project.data.links.map((link) => <a href={link.href}>{link.label} <SpiralMark /></a>)}
+      </div>
+    </header>
+    {project.data.preview && <img class="project-cover" src={project.data.preview.src} alt={project.data.preview.alt} width="1200" height="630" tabindex="0" />}
+    <div class="prose"><Content /></div>
+  </article>
+</BaseLayout>
