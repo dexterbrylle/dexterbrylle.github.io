@@ -25,7 +25,6 @@ const dateFormat = new Intl.DateTimeFormat("en", { month: "long", day: "numeric"
       <a class="back-link" href="/notes/">{notes.backLabel}</a>
       <p class="post-meta"><time datetime={post.data.pubDate.toISOString()}>{dateFormat.format(post.data.pubDate)}</time><span>{post.data.tags.join(" / ")}</span></p>
       <h1>{post.data.title}</h1><p>{post.data.description}</p>
-      <p class="author-note">By <a href="/about/">{site.fullName}</a>, {site.jobTitle}</p>
     </header>
     <div class="prose"><Content /></div>
   </article>
