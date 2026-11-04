@@ -28,7 +28,7 @@ Built as a static site. Small scripts handle theme switching, navigation, articl
 | Content | Markdown + Content Collections |
 | Styling | Plain CSS with CSS variables |
 | Diagrams | Mermaid (server-side rendered) |
-| Host | GitHub Pages + Cloudflare |
+| Host | Cloudflare Pages |
 
 ---
 
@@ -101,13 +101,24 @@ MERMAID_BROWSER_CHANNEL=chrome VERIFY_URL=http://127.0.0.1:4321 node scripts/ver
 
 ## Deployment
 
-Pushes to `main` auto-deploy via GitHub Actions. The workflow:
+Cloudflare Pages builds and deploys pushes to `main` directly through its Git integration with `dexterbrylle/dexterbrylle.github.io`. GitHub Actions is not required.
 
-1. Runs `astro check && astro build`
-2. Uploads to GitHub Pages
-3. Cloudflare serves from custom domain with SSL
+Deployment URL: https://dexterbrylle.pages.dev/
 
-See `.github/workflows/deploy.yml` for the full pipeline. Feature branches run CI without deploying.
+The Pages project uses these build settings:
+
+| Setting | Value |
+|---------|-------|
+| Production branch | `main` |
+| Framework preset | Astro |
+| Build command | `npx playwright install chromium && npm run build` |
+| Build output directory | `dist` |
+| Root directory | Repository root |
+| Environment variable | `NODE_VERSION=22` |
+
+Cloudflare installs npm dependencies before the build command. Chromium is required to render Mermaid diagrams to SVG. The site uses Astro's static output and does not need a Cloudflare SSR adapter.
+
+To finish the custom domain migration, add `dexterbrylle.com` through the Pages project's custom domains settings and apply the DNS change Cloudflare requests. Verify HTTPS and the diagram pages on the custom domain before unpublishing the old site in GitHub's repository Settings → Pages.
 
 ---
 
