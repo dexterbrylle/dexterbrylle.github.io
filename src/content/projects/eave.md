@@ -1,7 +1,7 @@
 ---
 title: "Eave"
 description: "Notes and checklists pinned to your iPhone Lock Screen. A small place for the thing you need to remember today."
-status: "Coming soon"
+status: "Live"
 order: 2
 tags: ["iPhone", "Notes", "Widgets"]
 icon: "/images/projects/eave-icon.webp"
@@ -9,6 +9,8 @@ preview:
   src: "/images/projects/eave.webp"
   alt: "Eave's yellow note on an iPhone Lock Screen, surrounded by paper notes and a cat."
 links:
+  - label: "View on the App Store"
+    href: "https://apps.apple.com/app/id6816394895"
   - label: "Explore Eave"
     href: "https://tryeave.app/"
 ---
@@ -21,4 +23,4 @@ Schedule a pin for later, keep notes visible with Home Screen widgets, or pin a 
 
 ## A personal place for reminders
 
-Your notes stay on your phone, with no account required. Eave is coming soon to the App Store. Its website includes an interactive preview you can try now.
+Your notes stay on your phone, with no account required. Eave is available on the App Store. Its website includes an interactive preview you can try.
