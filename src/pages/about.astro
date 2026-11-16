@@ -1,13 +1,48 @@
 ---
-import SpiralMark from "../components/SpiralMark.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ContactLinks from "../components/ContactLinks.astro";
 import profile from "../data/profile.json";
 import { site } from "../data/site.json";
 ---
-<BaseLayout title={`Site Reliability Engineer | ${site.fullName}`} description={profile.description}>
-  <header class="page-heading"><h1>{profile.title}</h1></header>
-  {profile.sections.map((section) => <section class="prose chart-section" aria-labelledby={`${section.id}-title`}><h2 id={`${section.id}-title`}>{section.title}</h2>{section.paragraphs.map((paragraph) => <p>{paragraph}</p>)}</section>)}
-  <p class="link-row"><a href="/stack/">{profile.stackLabel} <SpiralMark /></a></p>
-  <section class="prose chart-section" aria-labelledby="contact-title"><h2 id="contact-title">{profile.contactTitle}</h2><p>{profile.contactText}</p><ContactLinks /></section>
+<BaseLayout title={`Software & Site Reliability Engineer | ${site.fullName}`} description={profile.description}>
+  <div class="wrap">
+    <section class="row page-head" aria-labelledby="profile-title">
+      <div class="row-label">{profile.title.toLowerCase()}</div>
+      <div class="row-body measure">
+        <h1 id="profile-title">{profile.headline}</h1>
+        <p>{profile.summary}</p>
+        <dl class="facts">
+          {profile.facts.map((fact) => <div><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
+        </dl>
+      </div>
+    </section>
+    <section class="row" aria-labelledby="experience-title">
+      <h2 class="row-label" id="experience-title">experience</h2>
+      <ol class="row-body measure timeline">
+        {profile.experience.map((job) => (
+          <li>
+            <span class="date">{job.when}</span>
+            <div>
+              <h3>{job.role}</h3>
+              <p class="muted">{job.where}</p>
+              <p>{job.detail}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+    <section class="row" aria-labelledby="tools-title">
+      <h2 class="row-label" id="tools-title">works with</h2>
+      <dl class="row-body measure defs">
+        {profile.tools.map((tool) => <><dt>{tool.area}</dt><dd>{tool.items}</dd></>)}
+      </dl>
+    </section>
+    <section class="row" aria-labelledby="contact-title">
+      <h2 class="row-label" id="contact-title">contact</h2>
+      <div class="row-body measure">
+        <p>{profile.contactText}</p>
+        <ContactLinks />
+      </div>
+    </section>
+  </div>
 </BaseLayout>

@@ -1,8 +1,9 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import rehypeMermaid from "rehype-mermaid";
-import certifications from "./src/data/certifications.json" with { type: "json" };
+import { unified } from "@astrojs/markdown-remark";
 import homelab from "./src/data/homelab.json" with { type: "json" };
+import { hairlineLight, hairlineDark } from "./src/lib/shiki-themes.mjs";
 
 // Preserve the SVG's natural dimensions so wider panels never shrink its labels.
 function rehypeMermaidPanels() {
@@ -55,18 +56,21 @@ export default defineConfig({
     return !pathname.startsWith("/blog/")
       && pathname !== "/404/"
       && pathname !== "/404.html"
-      && !(pathname === "/certifications/" && certifications.items.length === 0)
       && !(pathname === "/homelab/" && homelab.items.length === 0);
   } })],
   site: "https://dexterbrylle.com",
   output: "static",
+  // Keep v6 whitespace handling between inline elements (v7 defaults to "jsx").
+  compressHTML: true,
   markdown: {
+    // Keep the unified pipeline so rehype-mermaid and the panel plugin still run.
+    processor: unified(),
     syntaxHighlight: {
       type: "shiki",
       excludeLangs: ["mermaid"],
     },
     shikiConfig: {
-      themes: { light: "github-light-default", dark: "github-dark-default" },
+      themes: { light: hairlineLight, dark: hairlineDark },
       defaultColor: false,
     },
     rehypePlugins: [
@@ -74,20 +78,20 @@ export default defineConfig({
         css: new URL("./public/styles/fonts.css", import.meta.url),
         ...(process.env.MERMAID_BROWSER_CHANNEL ? { launchOptions: { channel: process.env.MERMAID_BROWSER_CHANNEL } } : {}),
         mermaidConfig: {
-          fontFamily: "IBM Plex Sans, sans-serif",
+          fontFamily: "Geist, sans-serif",
           theme: "base",
           themeVariables: {
-            primaryColor: "#F5F5F4",
-            primaryTextColor: "#1C1917",
-            primaryBorderColor: "#78716C",
-            lineColor: "#78716C",
-            secondaryColor: "#E7E5E4",
-            tertiaryColor: "#FAFAF9",
-            background: "#FAFAF9",
-            mainBkg: "#F5F5F4",
-            secondBkg: "#E7E5E4",
-            textColor: "#1C1917",
-            fontFamily: "IBM Plex Sans, sans-serif",
+            primaryColor: "#F5F2EA",
+            primaryTextColor: "#1F1F28",
+            primaryBorderColor: "#1F1F28",
+            lineColor: "#54546D",
+            secondaryColor: "#ECE8DE",
+            tertiaryColor: "#FAF8F3",
+            background: "#FAF8F3",
+            mainBkg: "#F5F2EA",
+            secondBkg: "#ECE8DE",
+            textColor: "#1F1F28",
+            fontFamily: "Geist, sans-serif",
           },
         },
         strategy: "inline-svg",

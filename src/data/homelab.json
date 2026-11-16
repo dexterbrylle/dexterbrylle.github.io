@@ -2,6 +2,17 @@
   "title": "Homelab",
   "kicker": "Lab status",
   "description": "A place to chart the lab and its services.",
+  "summary": "Infrastructure experiments, useful automation, and lessons from running things.",
+  "cardLabel": "03 / infrastructure",
+  "flow": [
+    "host",
+    "services",
+    "observe"
+  ],
+  "tools": [
+    "proxmox",
+    "tailscale"
+  ],
   "telemetry": {
     "label": "Live telemetry",
     "state": "Coming soon",
@@ -12,7 +23,10 @@
     "kicker": "Route awaiting chart",
     "title": "No services listed yet.",
     "description": "The lab's services and their health will be charted here — what runs, and whether it is operational. The inventory appears as the lab is documented.",
-    "onward": { "label": "See the tools I work with", "href": "/stack/" }
+    "onward": {
+      "label": "See the profile",
+      "href": "/about/"
+    }
   },
   "items": [],
   "statusLabels": {

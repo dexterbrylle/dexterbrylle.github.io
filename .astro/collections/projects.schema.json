@@ -1,86 +1,78 @@
 {
-  "$ref": "#/definitions/projects",
-  "definitions": {
-    "projects": {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Live",
+        "Coming soon",
+        "Experiment",
+        "Paused"
+      ]
+    },
+    "order": {
+      "default": 0,
+      "type": "number"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "icon": {
+      "type": "string"
+    },
+    "preview": {
       "type": "object",
       "properties": {
-        "title": {
+        "src": {
           "type": "string"
         },
-        "description": {
-          "type": "string"
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "Live",
-            "Coming soon",
-            "Experiment",
-            "Paused"
-          ]
-        },
-        "order": {
-          "type": "number",
-          "default": 0
-        },
-        "tags": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "icon": {
-          "type": "string"
-        },
-        "preview": {
-          "type": "object",
-          "properties": {
-            "src": {
-              "type": "string"
-            },
-            "alt": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "src",
-            "alt"
-          ],
-          "additionalProperties": false
-        },
-        "links": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "label": {
-                "type": "string"
-              },
-              "href": {
-                "type": "string",
-                "format": "uri"
-              }
-            },
-            "required": [
-              "label",
-              "href"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "$schema": {
+        "alt": {
           "type": "string"
         }
       },
       "required": [
-        "title",
-        "description",
-        "status",
-        "tags",
-        "links"
-      ],
-      "additionalProperties": false
+        "src",
+        "alt"
+      ]
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "label",
+          "href"
+        ]
+      }
+    },
+    "$schema": {
+      "type": "string"
     }
   },
-  "$schema": "http://json-schema.org/draft-07/schema#"
+  "required": [
+    "title",
+    "description",
+    "status",
+    "tags",
+    "links"
+  ]
 }

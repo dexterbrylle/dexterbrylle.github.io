@@ -1,8 +1,11 @@
 ---
 import { contact, home } from "../data/site.json";
-interface Props { label?: string }
-const { label = home.contactLabel } = Astro.props;
+import Arrow from "./Arrow.astro";
+interface Props { label?: string; stacked?: boolean }
+const { label = home.contactLabel, stacked = false } = Astro.props;
 ---
-<nav class="link-row" aria-label={label}>
-  {contact.map(({ label, href }) => <a href={href} rel={href.startsWith("https:") ? "noreferrer" : undefined}>{label}</a>)}
+<nav class:list={[stacked ? "identity-links" : "link-row"]} aria-label={label}>
+  {contact.map(({ label, href }) => href.startsWith("mailto:")
+    ? <a class="strong ink" href={href}>{label}</a>
+    : <a href={href} rel="noreferrer">{label.toLowerCase()} <Arrow dir="out" /></a>)}
 </nav>

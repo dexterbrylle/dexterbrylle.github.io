@@ -1,26 +1,39 @@
 {
   "title": "Profile",
-  "description": "Meet Dexter Brylle Matos, a Site Reliability Engineer and Technical Lead with over 13 years of experience in observability, cloud infrastructure, and security.",
-  "kicker": "The engineer",
-  "sections": [
+  "description": "Dexter Brylle Matos is a software and security engineer working in site reliability: observability, multi-cloud infrastructure, and secure releases, with 13+ years of experience.",
+  "headline": "Software and security engineer, working in site reliability.",
+  "summary": "13+ years across backend software and infrastructure. I make production systems observable, releases safer, and on-call quieter.",
+  "facts": [
+    { "label": "now", "value": "SRE, banking and finance" },
+    { "label": "clouds", "value": "GCP, Azure, AWS" },
+    { "label": "based in", "value": "Philippines" },
+    { "label": "open to", "value": "SRE, infra, security" }
+  ],
+  "experience": [
     {
-      "id": "summary",
-      "title": "Summary",
-      "paragraphs": [
-        "I'm a Site Reliability Engineer and Technical Lead with over 13 years of experience bridging software development and enterprise-scale infrastructure. I specialize in Observability-as-Code and AI-driven reliability, with a proven track record of reducing production incidents by 95% and automating complex CI/CD pipelines.",
-        "My work spans multi-cloud environments (GCP, Azure, AWS), container orchestration, and application security—with a foundation in microservices architecture and full-stack development."
-      ]
+      "when": "now",
+      "role": "Site Reliability Engineer",
+      "where": "Banking and finance",
+      "detail": "Observability as code with Dynatrace Monaco, AI-assisted release verification, Terraform across GCP, Azure, and AWS. Security liaison for production releases."
     },
     {
-      "id": "experience",
-      "title": "Career",
-      "paragraphs": [
-        "Currently a Site Reliability Engineer in the banking and financial sector, managing enterprise-wide observability through Dynatrace Monaco and designing internal platforms for intelligent release verification powered by AI. I design, provision, and maintain multi-cloud infrastructure using Terraform across GCP, Azure, and AWS, and serve as the security liaison owning vulnerability assessments and compliance documentation for production releases.",
-        "Previously, I led technical teams as a Technical Lead and Senior Backend Engineer, managing cloud infrastructure for consumer fitness applications. There I drove down production incidents by 95%, transitioned deployments to Blue-Green strategies to eliminate downtime, and ran SAST/DAST security scanning programs. My earlier roles included directing architecture transformations, building full-stack applications, and developing internal tools and automation across startups and global enterprises."
-      ]
+      "when": "before",
+      "role": "Technical Lead, Senior Backend Engineer",
+      "where": "Consumer fitness apps",
+      "detail": "Cut production incidents by 95%, moved deploys to Blue-Green, and ran SAST/DAST scanning."
+    },
+    {
+      "when": "earlier",
+      "role": "Full-stack and backend engineer",
+      "where": "Startups and global enterprises",
+      "detail": "Architecture changes, full-stack applications, internal tools and automation."
     }
   ],
-  "contactTitle": "Get in touch",
-  "contactText": "Open to opportunities in site reliability engineering, cloud infrastructure, and security architecture. Let's talk about how I can help build and maintain your next system.",
-  "stackLabel": "Explore my stack"
+  "tools": [
+    { "area": "Cloud", "items": "GCP, Azure, AWS, Kubernetes, Docker, Terraform" },
+    { "area": "Observability", "items": "Dynatrace, Grafana, Prometheus, Datadog, New Relic" },
+    { "area": "Code", "items": "TypeScript/Node.js, Go, Python" },
+    { "area": "Security", "items": "Snyk, SonarQube, Burp Suite, Vault, threat modeling" }
+  ],
+  "contactText": "Open to site reliability, cloud infrastructure, and security architecture roles."
 }

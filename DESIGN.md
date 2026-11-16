@@ -1,57 +1,69 @@
-# Design system
+# Design system — Hairline
 
-The website takes its visual cues from html-doc's minimal theme: off-white paper, rounded sans-serif text, quiet metadata, thin rules, and compact document lists. Notes and personal projects share the homepage. The author biography and inventories remain available through navigation.
+Warm paper, Kanagawa sumi-ink black, one sunflower highlighter, thin rules. The site reads like a well-kept engineering notebook: labels sit in a narrow left gutter in mono, content sits in a reading column, and sections are separated by 1px lines instead of boxes or shadows. The canvas this came from is "dexterbrylle.com redesign" (Home v2 board).
 
-## Palette
+## Rules
 
-| Token | Value | Use |
-|---|---|---|
-| `--ground` | `#fafaf9` | Page background |
-| `--surface` | `#f5f5f4` | Code and diagram panels |
-| `--ink` | `#111111` | Body text and headings |
-| `--muted` | `#595959` | Dates, tags, descriptions |
-| `--accent` | `#111111` | Links and focus |
-| `--accent-hover` | `#000000` | Link hover |
-| `--line` | `#d6d3d1` | Dividers |
+1. **Two typefaces, fixed jobs.** Geist for anything read; Geist Mono for labels, dates, navigation, metadata and code. No third face.
+2. **One accent, and it means "you can act on this."** Sunflower yellow (`#ffe278`, the Eave yellow) is a highlighter, never a text color: it fills behind link text on hover, marks the current nav item and contents entry, and backs the `dbm.` mark. Text on it is always ink.
+3. **Labels in a gutter, text in a column.** 160px mono label, 48px gap, reading text capped at 680px (~70ch).
+4. **Hairlines, not containers.** Sections divide with one 1px rule. The only fills are media frames and code panels.
+5. **Dates are ISO** (`2026-11-05`), mono, tabular, right-aligned in lists.
+6. **One decoration.** The dotted band behind the home hero. Nothing else is ornamental.
 
-Monochrome light and dark themes. Light keeps the original off-white paper; dark uses #151515 ground, #202020 panels, #f5f5f4 ink, and #b5b5b5 secondary text. Selection reverses ink and ground. Every page load follows system appearance, including live system changes. The footer toggle switches the current page without saving an override. Links have no underlines; keyboard focus retains a visible outline. Directional links carry a circle that morphs into a spiral on hover or keyboard focus. Reduced motion uses instant feedback.
+## Tokens
 
-All images and SVGs start in grayscale. Hovering an image, its link, or its containing project, gear item, figure, or diagram reveals the original colors. Keyboard focus produces the same reveal; standalone project covers are focusable. Color transitions last 240ms and become instant with reduced motion. Inline line icons keep their authored monochrome colors. Dark diagrams preserve inversion for readability while their grayscale value responds to interaction.
+| Token | Light | Dark | Use |
+|---|---|---|---|
+| `--bg` | `#f5f2ea` | `#1f1f28` | Page |
+| `--surface` | `#ece8de` | `#2a2a37` | Code, media frames |
+| `--ink` | `#1f1f28` (sumiInk3) | `#dcd7ba` (fujiWhite) | Headings, titles |
+| `--text` | `#2a2a37` | `#c8c4ad` | Body |
+| `--muted` | `#54546d` (6.6:1) | `#9a9886` (5.6:1) | Labels, dates, descriptions |
+| `--line` | `#d6d2c7` | `#363646` | Rules |
+| `--accent` | `#ffe278` | `#ffe278` | Highlighter fill, logo tile |
+| `--on-accent` | `#1f1f28` | `#1f1f28` | Text on the highlighter |
+| `--focus` | `#1f1f28` | `#ffe278` | Focus outline |
+| `--dot` | ink at 16% | ink at 12% | Hero band dots |
 
-The footer contains the copyright, contact links, and theme toggle. On phones the copyright sits above the contact row, with the toggle at the right.
+Links rest with a 1px underline at 30% ink, offset 3px; on hover a sunflower highlighter swipes in behind the text (background-size, 260ms) and the underline fades. Focus is a 2px outline in `--focus`. Theme follows the system; the footer switch (system / light / dark) stores an override in `localStorage`.
 
-## Typography and layout
+## Type
 
-Text, headings, controls, and diagram labels use self-hosted IBM Plex Sans. Inline code and fenced blocks use self-hosted IBM Plex Mono. Sans has normal and italic variable faces covering weights 400–700; Mono has regular, semibold, and regular italic faces. Latin WOFF2 files and their OFL licenses live in `public/fonts/`; `public/styles/fonts.css` declares them with `font-display: swap`. Only normal Sans is preloaded globally. Base text is 18px (112.5% of the browser default) with 1.65 line height. Supporting text stays at 14–15px. Homepage headings scale from 36px to 52px; page and article titles scale from 36px to 44px. Writing titles are 22.5px, and prose section headings are 28px. Article prose uses 1.75 line height and a maximum measure of 70ch, inside an 820px reading column. Headings remain sentence case rather than shrinking into metadata.
+| Role | Spec |
+|---|---|
+| Display (home hero) | Geist 600, clamp(34px → 60px), line-height 1.05, −3% tracking |
+| Page / article title | Geist 600, 40–44px, −2.5% |
+| Prose heading | Geist 600, 24px |
+| Body | Geist 400, 17px / 1.6; prose 1.7 |
+| Small | Geist 15px, muted |
+| Label | Geist Mono 13px, lowercase |
+| Meta | Geist Mono 12px |
+| Code | Geist Mono 13.5px / 1.65 |
 
-The page is at most 1160px wide. Wide screens use 40px outer gutters, with 20px gutters on phones. Arrival sections have generous top spacing and writing rows have 30px vertical breathing room. Writing index rows place the title and description on the left, dates and tags on the right. Homepage notes keep metadata beneath the title, beside a narrower Building column with app icons and project summaries. At 760px and below, Notes and Building stack, writing rows become a single column, and navigation becomes a menu.
+Fonts are self-hosted latin subsets in `public/fonts/` (SIL OFL), declared in `public/styles/fonts.css`. Arrows are inline SVG (`src/components/Arrow.astro`) so they match regardless of font subset.
 
-## Projects and navigation
+## Layout
 
-Home, Notes, Building, and Profile are the primary navigation. Gear, Stack, Certifications, and Homelab live under More on desktop; the mobile menu lists every destination. Both disclosures close on outside clicks and Escape, with Escape returning focus to the summary when focus is inside.
-
-Building uses a two-column gallery of official product previews, followed by app icons, project names, plain-text statuses, descriptions, and detail links. Project pages use an 820px reading column with product links, an image, and Markdown prose. Preview images use 12px corners; 48px app icons use 10px corners. Project previews reveal their original colors on interaction in both themes. Status is an authored label, not live telemetry.
-
-Gear uses image links with category, name, and description beneath them. Hover reveals color without turning the image away. Selecting an image still opens the viewer; its focused or hovered image shows the original colors.
-
-Project content lives in `src/content/projects/`, independently of notes. Entries support optional icons and preview images so an experiment can ship as text alone. Adding a project needs no component changes. Links remain free of underlines in every state. Note and project titles reserve space for a circle-to-spiral cue that appears on hover or keyboard focus. Its opacity changes in 150ms and its path morphs in 300ms. Keyboard focus keeps the outline; reduced motion shows the spiral immediately without animation. Image color reveals remain independent of the title cue.
+- Page max 1120px, gutters `clamp(20px, 5vw, 40px)`.
+- `.row` = label gutter + body. Below 760px the label sits above the body.
+- Home: dotted hero band → three-up strip (identity · intro · field note loop) → `01 / building` cards (Fillo, Eave, Homelab) → `02 / notes` → "Say hello."
+- Navigation: lowercase mono `notes · building · homelab · profile`. The current item sits on a sunflower marker. On phones everything collapses into `menu +`. `html` reserves the scrollbar gutter so the header never shifts between short and long pages.
+- Logo: `dbm.` in ink on a sunflower tile beside "Dexter Brylle"; it tilts 3° on hover. The favicon is the same mark, outlined from Geist, on a rounded sunflower square.
 
 ## Articles
 
-Astro's rendered Markdown headings supply the contents navigation. Posts without section headings omit the rail. Longer posts use a 220px contents column and a 48px gap beside the prose. The rail stays 24px below the viewport top and has its own scroll area if its contents exceed the viewport. Scroll tracking marks the current section and keeps its link visible.
+The left gutter holds a back link and a sticky contents rail; the active section gets a clay hairline. On phones the rail becomes a sticky disclosure. Code blocks use custom Shiki themes built from the palette (`src/lib/shiki-themes.mjs`); every token clears 4.5:1 on its panel, and the language shows in a header strip from `data-language`. Mermaid renders to inline SVG at build with the palette as `themeVariables`; diagrams wider than the column spill into the right page margin instead of scrolling on desktop, and pan by keyboard on phones.
 
-On mobile the contents becomes a sticky disclosure above the article. Articles with diagrams use this disclosure on desktop too, freeing the full width for diagrams. Choosing a section closes the disclosure. Section headings have 80px scroll margin.
+## Motion
 
-Diagrams render to inline SVG at build time, after loading the same local Plex fonts used by the page. Prose stays centered at 70ch, while diagrams can extend into the available viewport width, leaving 40px gutters on desktop and 20px on phones. Small diagrams stay at their natural width. SVGs retain a 1:1 scale, with padding on the panel rather than inside the SVG, so labels never shrink to fit. Panels scroll only when the actual diagram exceeds the available space; they are focusable for keyboard panning.
+Read-mode site, so motion explains state and continuity; one authored moment (`public/styles/motion.css`).
 
-Fenced code uses Shiki's `github-light-default` and `github-dark-default` themes. Both token palettes are generated at build time and selected through the current `data-theme`. Code keeps its syntax colors without a grayscale filter or monochrome overrides. Unknown or unlabeled languages remain readable plain text. Code colors are a deliberate exception to the image-only color reveal.
+- **Focal:** on the home page the highlighter runs the field-note loop once — design, build, observe — and stays on observe; refine's dashed outline draws in last.
+- **Continuity:** cross-document view transitions, cross-fade only (no translate). The header is frozen; the nav marker (`view-transition-name: nav-marker`) glides to the new section; a note title carries from the list into the article. Theme switching cross-fades through `startViewTransition`.
+- **Feedback:** the highlighter swipe on links; the More/menu panel drops in (180ms).
+- **Reduced motion:** no animations or transitions; highlights and states change instantly, and the loop shows its final state.
 
-## 404 easter egg
+## Verification
 
-Unknown paths use `src/pages/404.astro`, which builds to the root `404.html` for GitHub Pages. The page is excluded from indexing and the sitemap. It keeps the site header and footer, with links back to Home, Notes, and Building.
-
-The supplied Admiral Ackbar ASCII GIF sits on a black stage, followed by a separate five-line ASCII "IT'S A TRAP!" banner in Plex Mono. The banner types across in a 4.4-second loop with a readable hold. Both animations play automatically without a playback button. Reduced motion and JavaScript-free browsing start with a still WebP frame and the complete banner. Playback suspends when the stage is offscreen or the tab is hidden.
-
-## Runtime
-
-Article navigation uses a small Astro script. Other reading content is static. Mermaid uses the neutral palette. For local machines without bundled Playwright Chromium, set `MERMAID_BROWSER_CHANNEL=chrome` when building or starting development. Normal CI continues to use its installed Chromium. `scripts/verify-reading.mjs` checks font loading, actual Markdown syntax highlighting and contrast, native diagram scale, wide diagrams, keyboard panning, and responsive widths against a running preview.
+`scripts/verify-reading.mjs` checks font loading, code contrast in both themes, Mermaid scale and fit, contents behaviour and overflow. Run with `MERMAID_BROWSER_CHANNEL=chrome` on machines without Playwright's bundled Chromium. `scripts/verify-design.mjs` still asserts an earlier design (Archivo, `.mobile-menu`, `.reading-course`) and needs rewriting before it is useful again.

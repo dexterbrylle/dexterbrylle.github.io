@@ -28,29 +28,14 @@
       "primary": true
     },
     {
-      "label": "Profile",
-      "path": "/about/",
+      "label": "Homelab",
+      "path": "/homelab/",
       "primary": true
     },
     {
-      "label": "Gear",
-      "path": "/gear/",
-      "primary": false
-    },
-    {
-      "label": "Stack",
-      "path": "/stack/",
-      "primary": false
-    },
-    {
-      "label": "Certifications",
-      "path": "/certifications/",
-      "primary": false
-    },
-    {
-      "label": "Homelab",
-      "path": "/homelab/",
-      "primary": false
+      "label": "Profile",
+      "path": "/about/",
+      "primary": true
     }
   ],
   "contact": [
@@ -68,27 +53,13 @@
     }
   ],
   "footer": {
-    "edition": "© 2026 dexterbrylle.com",
+    "edition": "© 2026 Dexter Brylle · built with Astro, served by Cloudflare · v2",
+    "themeLabel": "Theme",
     "contactLabel": "Contact links",
     "scaleLabel": "Charting the course",
     "northLabel": "North"
   },
   "waypoints": [
-    {
-      "label": "Gear",
-      "path": "/gear/",
-      "description": "Equipment inventory. Entries to come."
-    },
-    {
-      "label": "Stack",
-      "path": "/stack/",
-      "description": "The tools behind the work."
-    },
-    {
-      "label": "Certifications",
-      "path": "/certifications/",
-      "description": "A place for verified credentials. Entries to come."
-    },
     {
       "label": "Homelab",
       "path": "/homelab/",
@@ -103,8 +74,29 @@
     "allNotesLabel": "All notes",
     "waypointsTitle": "Explore the chart",
     "contactLabel": "Contact Dexter Brylle",
-    "identityLine": "Software Engineer. Builder. Cybersecurity.",
-    "headline": "Notes and things I'm building.",
+    "identityLine": "SRE · backend · security",
+    "location": "Philippines",
+    "headline": "I keep systems reliable, and build the tools around them.",
+    "heroKicker": "software engineer / sre / builder",
+    "intro": "Site reliability, backend development and security work. On the side: iOS apps and a homelab that runs most of my own software.",
+    "quietLine": "I like quiet systems: few moving parts, plain tools, nothing that pages me at night.",
+    "availability": "Open to roles in site reliability, cloud infrastructure, and security architecture.",
+    "fieldNote": {
+      "label": "field note — 001",
+      "quote": "Behind every simple experience is a well-considered system.",
+      "loop": [
+        "design",
+        "build",
+        "observe"
+      ],
+      "refine": "refine",
+      "refineNote": "feeds the next design",
+      "observeIndex": 2
+    },
+    "buildingLabel": "01 / building",
+    "buildingNote": "things I make and run",
+    "notesLabel": "02 / notes",
+    "helloTitle": "Say hello.",
     "authorLine": "I'm Dexter Brylle, a software and security engineer."
   },
   "notes": {

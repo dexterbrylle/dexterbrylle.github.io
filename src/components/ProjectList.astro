@@ -1,33 +1,29 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import SpiralMark from "./SpiralMark.astro";
+import Arrow from "./Arrow.astro";
 
 interface Props {
   projects: CollectionEntry<"projects">[];
-  compact?: boolean;
-  headingLevel?: "h2" | "h3";
+  showLinks?: boolean;
+  startIndex?: number;
 }
-const { projects, compact = false, headingLevel: Heading = "h2" } = Astro.props;
+const { projects, showLinks = false, startIndex = 1 } = Astro.props;
+const slug = (project: CollectionEntry<"projects">) => project.id.replace(/\.md$/, "");
+const kind = (tags: string[]) => tags.some((tag) => /iphone|ipad/i.test(tag)) ? "ios app" : (tags[0] ?? "project").toLowerCase();
+const pad = (n: number) => String(n).padStart(2, "0");
 ---
-<div class:list={["project-list", { "project-list-compact": compact }]}>
-  {projects.map((project) => (
-    <article class="project-item">
-      {!compact && project.data.preview && <a class="project-preview" href={`/building/${project.id.replace(/\.md$/, "")}/`} tabindex="-1">
-        <img src={project.data.preview.src} alt={project.data.preview.alt} width="1200" height="630" loading="lazy" />
-      </a>}
-      <div class="project-identity">
-        {project.data.icon && <img class="project-icon" src={project.data.icon} alt="" width="48" height="48" loading="lazy" />}
-        <div>
-          <Heading><a class="title-link" href={`/building/${project.id.replace(/\.md$/, "")}/`}><span>{project.data.title}</span><SpiralMark /></a></Heading>
-          <p class="project-status">{project.data.status}</p>
-        </div>
-      </div>
-      <p class="project-description">{project.data.description}</p>
-      {!compact && <p class="project-tags">{project.data.tags.join(" / ")}</p>}
-      <div class="project-actions">
-        <a class="project-link" href={`/building/${project.id.replace(/\.md$/, "")}/`}>About {project.data.title} <SpiralMark /></a>
-        {project.data.links.slice(0, 1).map((link) => <a class="project-link" href={link.href}>{link.label} <SpiralMark /></a>)}
-      </div>
-    </article>
-  ))}
-</div>
+{projects.map((project, i) => (
+  <article class="card">
+    {project.data.preview && <a class="card-media" href={`/building/${slug(project)}/`} tabindex="-1" aria-hidden="true">
+      <img src={project.data.preview.src} alt="" width="1200" height="630" loading="lazy" decoding="async" />
+    </a>}
+    <div class="card-head">
+      <a class="card-title" href={`/building/${slug(project)}/`}>{project.data.title}</a>
+      <span class="card-meta">{pad(startIndex + i)} / {kind(project.data.tags)}</span>
+    </div>
+    <p>{project.data.description}</p>
+    {showLinks && <div class="card-links">
+      {project.data.links.map((link) => <a href={link.href} rel="noreferrer">{new URL(link.href).hostname.replace(/^www\./, "")} <Arrow dir="out" /></a>)}
+    </div>}
+  </article>
+))}

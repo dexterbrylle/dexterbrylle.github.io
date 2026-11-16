@@ -1,19 +1,19 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import SpiralMark from "./SpiralMark.astro";
-interface Props { posts: CollectionEntry<"blog">[]; headingLevel?: "h2" | "h3" }
-const { posts, headingLevel: Heading = "h2" } = Astro.props;
-const dateFormat = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+interface Props { posts: CollectionEntry<"blog">[]; showTags?: boolean }
+const { posts, showTags = false } = Astro.props;
+const slug = (post: CollectionEntry<"blog">) => post.id.replace(/\.md$/, "");
+const iso = (date: Date) => date.toISOString().slice(0, 10);
 ---
-<div class="post-list">
+<ol class="entries">
   {posts.map((post) => (
-    <article class="post-item">
-      <div class="post-meta">
-        <time datetime={post.data.pubDate.toISOString()}>{dateFormat.format(post.data.pubDate)}</time>
-        <span>{post.data.tags.join(" / ")}</span>
+    <li>
+      <div class="entry-main">
+        <a class="entry-title" href={`/notes/${slug(post)}/`} style={`view-transition-name: note-${slug(post)}`}>{post.data.title}</a>
+        <p class="entry-desc">{post.data.description}</p>
+        {showTags && <p class="entry-tags">{post.data.tags.join(" · ")}</p>}
       </div>
-      <Heading><a class="title-link" href={`/notes/${post.id.replace(/\.md$/, "")}/`}><span>{post.data.title}</span><SpiralMark /></a></Heading>
-      <p>{post.data.description}</p>
-    </article>
+      <time class="date" datetime={post.data.pubDate.toISOString()}>{iso(post.data.pubDate)}</time>
+    </li>
   ))}
-</div>
+</ol>

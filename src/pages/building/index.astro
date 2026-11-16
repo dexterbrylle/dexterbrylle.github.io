@@ -2,12 +2,26 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ProjectList from "../../components/ProjectList.astro";
-import SpiralMark from "../../components/SpiralMark.astro";
+import Arrow from "../../components/Arrow.astro";
 import { building, site } from "../../data/site.json";
 const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
 ---
 <BaseLayout title={`Personal projects & experiments | ${site.name}`} description={building.description}>
-  <header class="page-heading"><h1>{building.title}</h1><p>{building.description}</p></header>
-  <section aria-label="Personal projects"><ProjectList projects={projects} /></section>
-  <p class="building-onward">More experiments and code on <a href="https://github.com/dexterbrylle">GitHub <SpiralMark /></a></p>
+  <div class="wrap">
+    <header class="page-head">
+      <h1>{building.title}</h1>
+      <p>{building.description}</p>
+    </header>
+    <section class="row" aria-labelledby="apps-title">
+      <h2 class="row-label" id="apps-title"><span class="ink">apps</span><span>{projects.length} live</span></h2>
+      <div class="row-body cards two"><ProjectList projects={projects} showLinks /></div>
+    </section>
+    <section class="row" aria-labelledby="elsewhere-title">
+      <h2 class="row-label" id="elsewhere-title"><span class="ink">elsewhere</span></h2>
+      <div class="row-body measure">
+        <p>More experiments and code live on GitHub.</p>
+        <div class="link-row"><a href="https://github.com/dexterbrylle" rel="noreferrer">github.com/dexterbrylle <Arrow dir="out" /></a></div>
+      </div>
+    </section>
+  </div>
 </BaseLayout>

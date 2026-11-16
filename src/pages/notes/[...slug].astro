@@ -1,74 +1,97 @@
 ---
 import { getCollection, render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { notes, site } from "../../data/site.json";
+import Arrow from "../../components/Arrow.astro";
+import { site } from "../../data/site.json";
+
 export async function getStaticPaths() {
-  return (await getCollection("blog")).map((post) => ({ params: { slug: post.id.replace(/\.md$/, "") }, props: { post } }));
+  const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  return posts.map((post, i) => ({
+    params: { slug: post.id.replace(/\.md$/, "") },
+    props: { post, older: posts[i + 1], newer: posts[i - 1] },
+  }));
 }
-const { post } = Astro.props;
+const { post, older, newer } = Astro.props;
 const { Content, headings } = await render(post);
 const contents = headings.filter((heading) => heading.depth <= 3);
-const dateFormat = new Intl.DateTimeFormat("en", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+const slug = post.id.replace(/\.md$/, "");
+const words = (post.body ?? "").split(/\s+/).filter(Boolean).length;
+const minutes = Math.max(1, Math.round(words / 220));
+const iso = (date: Date) => date.toISOString().slice(0, 10);
+const link = (entry: typeof post) => `/notes/${entry.id.replace(/\.md$/, "")}/`;
 ---
 <BaseLayout title={`${post.data.title} | ${site.name}`} description={post.data.description} type="article" publishedTime={post.data.pubDate.toISOString()} headline={post.data.title}>
-  <div class:list={["article-layout", { "has-contents": contents.length > 0 }]}>
-    {contents.length > 0 && <aside class="contents-rail">
-      <details open>
-        <summary>Contents</summary>
-        <nav aria-label="Article contents">
-          {contents.map((heading) => <a href={`#${heading.slug}`} data-depth={heading.depth}>{heading.text}</a>)}
+  <div class="wrap">
+    <div class="row article-head">
+      <div class="row-label"><a class="back" href="/notes/"><Arrow dir="left" /> notes</a></div>
+      <header class="row-body measure entry-header">
+        <h1 style={`view-transition-name: note-${slug}`}>{post.data.title}</h1>
+        <p class="lede">{post.data.description}</p>
+        <p class="meta-line">
+          <time datetime={post.data.pubDate.toISOString()}>{iso(post.data.pubDate)}</time>
+          <span>by <a href="/about/">{site.name}</a></span>
+          <span>{minutes} min read</span>
+          <span>{post.data.tags.join(" · ")}</span>
+        </p>
+      </header>
+    </div>
+
+    <div class="row article">
+      <aside class="row-label contents-col">
+        {contents.length > 0 && <nav class="contents" aria-label="On this page">
+          <details open>
+            <summary>contents</summary>
+            <ol>
+              {contents.map((heading) => <li><a href={`#${heading.slug}`} data-depth={heading.depth}>{heading.text}</a></li>)}
+            </ol>
+          </details>
+        </nav>}
+      </aside>
+      <article class="row-body">
+        <div class="prose"><Content /></div>
+        <nav class="article-end" aria-label="More notes">
+          {older ? <a href={link(older)}><span class="mono">← older</span><span class="ink">{older.data.title}</span></a> : <span></span>}
+          {newer
+            ? <a href={link(newer)}><span class="mono">newer →</span><span class="ink">{newer.data.title}</span></a>
+            : <a href={`mailto:${site.email}?subject=${encodeURIComponent(`Re: ${post.data.title}`)}`}><span class="mono">reply by email</span><span class="ink">{site.email}</span></a>}
         </nav>
-      </details>
-    </aside>}
-  <article class="entry">
-    <header class="entry-header">
-      <a class="back-link" href="/notes/">{notes.backLabel}</a>
-      <p class="post-meta"><time datetime={post.data.pubDate.toISOString()}>{dateFormat.format(post.data.pubDate)}</time><span>{post.data.tags.join(" / ")}</span></p>
-      <h1>{post.data.title}</h1><p>{post.data.description}</p>
-    </header>
-    <div class="prose"><Content /></div>
-  </article>
+      </article>
+    </div>
   </div>
   <script>
-    const rail = document.querySelector('.contents-rail');
-    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('.contents-rail a'));
+    const nav = document.querySelector<HTMLElement>(".contents");
+    const details = nav?.querySelector("details");
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".contents a"));
     const sections = links.map((link) => ({ link, heading: document.getElementById(decodeURIComponent(link.hash.slice(1))) }));
-    if (rail && sections.length) {
-      const details = rail.querySelector('details');
-      const compact = matchMedia('(max-width: 760px)');
-      const hasDiagrams = Boolean(document.querySelector('.entry .diagram'));
-      const adapt = () => { if (details) details.open = !compact.matches && !hasDiagrams; };
+    if (nav && details && sections.length) {
+      const compact = matchMedia("(max-width: 760px)");
+      const adapt = () => { details.open = !compact.matches; };
       adapt();
-      compact.addEventListener('change', adapt);
+      compact.addEventListener("change", adapt);
+      details.querySelector("summary")?.addEventListener("click", (event) => { if (!compact.matches) event.preventDefault(); });
+      nav.addEventListener("click", (event) => {
+        if (compact.matches && event.target instanceof Element && event.target.closest("a")) details.open = false;
+      });
       let current: HTMLAnchorElement | undefined;
       const update = () => {
         let active = sections[0];
-        for (const section of sections) {
-          if (section.heading && section.heading.getBoundingClientRect().top <= 90) active = section;
-        }
-        if (active && current !== active.link) {
-          const bounds = !compact.matches && !hasDiagrams ? rail.getBoundingClientRect() : null;
-          const item = bounds ? active.link.getBoundingClientRect() : null;
-          current?.removeAttribute('aria-current');
-          current = active.link;
-          current.setAttribute('aria-current', 'location');
-          if (bounds && item) {
-            if (item.top < bounds.top + 16) rail.scrollTop += item.top - bounds.top - 16;
-            else if (item.bottom > bounds.bottom - 16) rail.scrollTop += item.bottom - bounds.bottom + 16;
-          }
+        for (const section of sections) if (section.heading && section.heading.getBoundingClientRect().top <= 96) active = section;
+        if (!active || current === active.link) return;
+        current?.removeAttribute("aria-current");
+        current = active.link;
+        current.setAttribute("aria-current", "location");
+        if (!compact.matches) {
+          const box = nav.getBoundingClientRect();
+          const item = current.getBoundingClientRect();
+          if (item.top < box.top + 16) nav.scrollTop += item.top - box.top - 16;
+          else if (item.bottom > box.bottom - 16) nav.scrollTop += item.bottom - box.bottom + 16;
         }
       };
-      rail.addEventListener('click', (event) => {
-        if (event.target instanceof Element && event.target.closest('a') && (compact.matches || hasDiagrams) && details) details.open = false;
-      });
-      let pendingFrame = false;
-      window.addEventListener('scroll', () => {
-        if (pendingFrame) return;
-        pendingFrame = true;
-        requestAnimationFrame(() => {
-          pendingFrame = false;
-          update();
-        });
+      let pending = false;
+      addEventListener("scroll", () => {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(() => { pending = false; update(); });
       }, { passive: true });
       update();
     }

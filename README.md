@@ -16,7 +16,7 @@ A fast, minimal personal site featuring:
 - **Profile** — Bio, career, and contact information
 - **More** — Gear, stack, certifications, and homelab
 
-Built as a static site. Small scripts handle theme switching, navigation, article contents, and the gear viewer. Mermaid diagrams render to SVG at build time. The design uses quiet typography, light and dark themes, and simple document lists.
+Built as a static site. Small scripts handle theme switching, navigation, article contents, and the gear viewer. Mermaid diagrams render to SVG at build time. The design ("Hairline", see `DESIGN.md`) uses Geist and Geist Mono, one clay accent, hairline rules, light and dark themes, and CSS-only view transitions.
 
 ---
 
@@ -24,7 +24,7 @@ Built as a static site. Small scripts handle theme switching, navigation, articl
 
 | Layer | Choice |
 |-------|--------|
-| Framework | Astro 5 |
+| Framework | Astro 7 (Node 24, see `.nvmrc`) |
 | Content | Markdown + Content Collections |
 | Styling | Plain CSS with CSS variables |
 | Diagrams | Mermaid (server-side rendered) |

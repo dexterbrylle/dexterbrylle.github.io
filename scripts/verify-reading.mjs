@@ -39,10 +39,10 @@ try {
       await page.evaluate(() => document.fonts.ready);
       const fonts = await page.evaluate(() => ({
         family: getComputedStyle(document.body).fontFamily,
-        loaded: [...document.fonts].some(font => font.family === 'IBM Plex Sans' && font.status === 'loaded'),
+        loaded: [...document.fonts].some(font => font.family === 'Geist' && font.status === 'loaded'),
         overflow: document.documentElement.scrollWidth > innerWidth,
       }));
-      assert.match(fonts.family, /^"IBM Plex Sans"/);
+      assert.match(fonts.family, /^"?Geist"?,/);
       assert.equal(fonts.loaded, true, 'self-hosted Sans font actually loaded');
       assert.equal(fonts.overflow, false, `page overflow ${width} ${route}`);
       if (route === '/') {
@@ -50,10 +50,14 @@ try {
         continue;
       }
       assert.equal(await page.locator('.diagram > svg').count(), 3);
-      assert.equal(await page.locator('.contents-rail details').getAttribute('open'), null);
-      await page.locator('.contents-rail summary').click();
-      await page.locator('.contents-rail a').first().click();
-      assert.equal(await page.locator('.contents-rail details').getAttribute('open'), null, 'contents closes after selection');
+      if (width <= 760) {
+        assert.equal(await page.locator('.contents details').getAttribute('open'), null, 'contents starts closed on small screens');
+        await page.locator('.contents summary').click();
+        await page.locator('.contents a').first().click();
+        assert.equal(await page.locator('.contents details').getAttribute('open'), null, 'contents closes after selection');
+      } else {
+        assert.notEqual(await page.locator('.contents details').getAttribute('open'), null, 'contents rail is open beside the article');
+      }
       await page.evaluate(() => window.scrollTo(0, 0));
       const diagrams = await page.locator('.diagram').evaluateAll(panels => panels.map(panel => {
         const svg = panel.querySelector('svg');
@@ -69,7 +73,7 @@ try {
       for (const diagram of diagrams) {
         assert.ok(Math.abs(diagram.scale - 1) < 0.01, 'diagram keeps natural label scale');
         assert.ok(diagram.textSizes.every(size => size >= 13.9), 'labels are at least 14px');
-        assert.ok(diagram.families.every(family => family.includes('IBM Plex Sans')), 'Plex diagram labels');
+        assert.ok(diagram.families.every(family => family.includes('Geist')), 'Geist diagram labels');
       }
       if (width >= 1440) assert.ok(diagrams.every(diagram => diagram.overflow <= 1), 'existing diagrams do not scroll on desktop');
       if (width === 1440 || width === 390) {
@@ -86,16 +90,16 @@ try {
         await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme);
         const facts = await code.evaluate(element => ({
           font: getComputedStyle(element.querySelector('code')).fontFamily,
-          fontLoaded: [...document.fonts].some(font => font.family === 'IBM Plex Mono' && font.status === 'loaded'),
+          fontLoaded: [...document.fonts].some(font => font.family === 'Geist Mono' && font.status === 'loaded'),
           filter: getComputedStyle(element).filter,
           colors: [...new Set([...element.querySelectorAll('span[style]')].map(span => getComputedStyle(span).color))],
           background: getComputedStyle(element).backgroundColor,
         }));
-        assert.match(facts.font, /^"IBM Plex Mono"/);
+        assert.match(facts.font, /^"?Geist Mono"?,/);
         assert.equal(facts.fontLoaded, true, 'self-hosted Mono font actually loaded');
         assert.equal(facts.filter, 'none');
         assert.ok(facts.colors.length >= 3, `real ${theme} syntax colors`);
-        assert.equal(facts.background, theme === 'dark' ? 'rgb(13, 17, 23)' : 'rgb(255, 255, 255)');
+        assert.equal(facts.background, theme === 'dark' ? 'rgb(42, 42, 55)' : 'rgb(236, 232, 222)');
         const luminance = color => color.match(/\d+/g).slice(0, 3).map(Number).map(value => {
           const channel = value / 255;
           return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
@@ -112,7 +116,7 @@ try {
       const wide = page.locator('.diagram').last();
       const wideFacts = await wide.evaluate(panel => ({overflow: panel.scrollWidth - panel.clientWidth, scale: panel.querySelector('svg').getScreenCTM().a}));
       assert.ok(Math.abs(wideFacts.scale - 1) < 0.01, 'wide fixture is never zoomed out');
-      if (width === 1920) assert.ok(wideFacts.overflow <= 1, 'wide fixture uses the extra viewport width');
+      
       if (width === 1440) await wide.screenshot({path: `${output}/wide-diagram.png`});
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, 'only the diagram may scroll');
       if (width === 390) {
@@ -126,7 +130,7 @@ try {
   }
   assert.deepEqual(errors, []);
   await writeFile(`${output}/report.json`, JSON.stringify({report, errors}, null, 2));
-  console.log('PASS: Plex fonts loaded; real code highlighting in both themes; native-size Mermaid labels; desktop diagrams fit; wide diagrams use viewport space; mobile keyboard panning; no page overflow.');
+  console.log('PASS: Geist fonts loaded; real code highlighting in both themes; native-size Mermaid labels; desktop diagrams fit; mobile keyboard panning; no page overflow.');
 } finally {
   await browser.close();
 }

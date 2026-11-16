@@ -32,7 +32,7 @@ A practicing SRE who leads as a **builder-first engineer** (owner-confirmed): de
 
 ## Capabilities and Constraints
 
-- Static Astro 5 site: zero client-side JavaScript on the reading surface; plain CSS with custom properties; Markdown content collections.
+- Static Astro 7 site: zero client-side JavaScript on the reading surface; plain CSS with custom properties; Markdown content collections.
 - Routes: Home (intro + latest four posts), About (summary / career / skills / contact), Writing index, and individual posts.
 - Mermaid diagrams render to inline SVG at build (no runtime dependency).
 - Hosting: GitHub Pages origin behind Cloudflare custom domain `dexterbrylle.com` (`CNAME` in repo); `robots.txt` and generated `sitemap.xml` present.

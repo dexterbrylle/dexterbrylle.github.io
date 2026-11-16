@@ -1,36 +1,95 @@
 ---
 import { getCollection } from "astro:content";
-import SpiralMark from "../components/SpiralMark.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import NoteList from "../components/NoteList.astro";
 import ProjectList from "../components/ProjectList.astro";
-import { site, home, building } from "../data/site.json";
-const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()).slice(0, 4);
-const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order).slice(0, 3);
+import ContactLinks from "../components/ContactLinks.astro";
+import Arrow from "../components/Arrow.astro";
+import homelab from "../data/homelab.json";
+import { site, home } from "../data/site.json";
+
+const allPosts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = allPosts.slice(0, 4);
+const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order).slice(0, 2);
+const note = home.fieldNote;
 ---
 <BaseLayout title={home.title} description={home.description}>
-  <section class="intro" aria-labelledby="intro-title">
-    <h1 id="intro-title">{home.headline}</h1>
-    <p class="profile">{site.statement}</p>
-    <p class="author-note">{home.authorLine} <a href="/about/">More about me <SpiralMark /></a></p>
-    <p class="notebook-welcome">
-      <svg class="welcome-mark" viewBox="0 0 36 28" width="36" height="28" fill="none" aria-hidden="true">
-        <path d="M18 24V5M18 5C14 2 8 2 3 4V22C8 20 14 21 18 24C22 21 28 20 33 22V4C28 2 22 2 18 5" />
-        <path d="M7 9C10 8 13 9 14 10M7 14C10 13 13 14 14 15M22 10C25 9 28 8 29 9M22 15C25 14 28 13 29 14" />
-      </svg>
-      <span>A working notebook on software, systems, and security.</span>
-    </p>
-    <div class="link-row intro-links"><a href="/notes/">Read the notes <SpiralMark /></a><a href="/building/">See what I'm building <SpiralMark /></a></div>
+  <section class="band" aria-labelledby="hero-title">
+    <div class="wrap band-inner">
+      <p class="kicker">{home.heroKicker}</p>
+      <h1 id="hero-title" class="display">{home.headline}</h1>
+    </div>
   </section>
-  <div class="home-columns">
-  <section class="home-notes" aria-labelledby="recent-title">
-    <div class="section-heading"><h2 id="recent-title">{home.recentTitle}</h2><a href="/notes/">{home.allNotesLabel} <SpiralMark /></a></div>
-    <NoteList posts={posts} headingLevel="h3" />
-  </section>
-  <section class="home-building" aria-labelledby="building-title">
-    <div class="section-heading"><h2 id="building-title">{building.title}</h2><a href="/building/">All projects <SpiralMark /></a></div>
-    <ProjectList projects={projects} compact headingLevel="h3" />
-    <p class="building-onward">Small apps for everyday things.</p>
-  </section>
+
+  <div class="wrap">
+    <section class="triad" aria-label="About Dexter Brylle">
+      <div class="identity">
+        <span class="name">{site.name}</span>
+        <span>{home.identityLine}</span>
+        <span>{home.location}</span>
+        <ContactLinks stacked />
+      </div>
+      <div class="intro">
+        <p>{home.intro}</p>
+        <p class="quiet">{home.quietLine}</p>
+        <p class="availability">{home.availability}</p>
+        <div class="link-row">
+          <a class="strong" href="#work">selected work <Arrow dir="down" /></a>
+          <a href="/notes/">read my notes <Arrow /></a>
+          <a href="/about/">profile <Arrow /></a>
+        </div>
+      </div>
+      <figure class="field-note">
+        <figcaption>{note.label}</figcaption>
+        <blockquote>{note.quote}</blockquote>
+        <div class="loop" role="img" aria-label="Design, build, observe, refine, then back to design.">
+          <div class="loop-line">
+            {note.loop.map((step, i) => <>
+              {i > 0 && <span class="sep"><Arrow /></span>}
+              <span class:list={["node", { on: i === note.observeIndex }]} style={`--i: ${i}`}>{step}</span>
+            </>)}
+          </div>
+          <div class="loop-line">
+            <span class="sep cycle"><Arrow dir="cycle" /></span>
+            <span class="node dashed" style={`--i: ${note.loop.length}`}>{note.refine}</span>
+            <span class="sep"><Arrow dir="left" /> {note.refineNote}</span>
+          </div>
+        </div>
+      </figure>
+    </section>
+
+    <section class="row" id="work" aria-labelledby="work-title">
+      <h2 class="row-label" id="work-title"><span class="ink">{home.buildingLabel}</span><span>{home.buildingNote}</span></h2>
+      <div class="row-body cards">
+        <ProjectList projects={projects} />
+        <article class="card">
+          <a class="card-media workbench" href="/homelab/" tabindex="-1" aria-hidden="true">
+            <span class="muted">the workbench</span>
+            <span class="loop-line">
+              {homelab.flow.map((step, i) => <>{i > 0 && <span class="muted"><Arrow /></span>}<span class="node">{step}</span></>)}
+            </span>
+            <span class="muted">{homelab.tools.join(" · ")}</span>
+          </a>
+          <div class="card-head">
+            <a class="card-title" href="/homelab/">{homelab.title}</a>
+            <span class="card-meta">{homelab.cardLabel}</span>
+          </div>
+          <p>{homelab.summary}</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="row" aria-labelledby="notes-title">
+      <h2 class="row-label" id="notes-title"><span class="ink">{home.notesLabel}</span><span>{allPosts.length} entries</span></h2>
+      <div class="row-body measure-wide">
+        <NoteList posts={posts} />
+        <a class="more-link" href="/notes/">{home.allNotesLabel.toLowerCase()} <Arrow /></a>
+      </div>
+    </section>
+
+    <section class="hello" aria-labelledby="hello-title">
+      <h2 id="hello-title">{home.helloTitle}</h2>
+      <ContactLinks />
+    </section>
   </div>
 </BaseLayout>

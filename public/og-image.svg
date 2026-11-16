@@ -1,15 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#F1EFE9"/>
-  <path d="M80 0v630M340 0v630M600 0v630M860 0v630M1120 0v630" stroke="#1F2A30" stroke-opacity=".08"/>
-  <path d="M80 72h1040M80 550h1040M105 72v478" stroke="#1F2A30" stroke-opacity=".2"/>
-  <path d="M105 170v310" stroke="#0E6160" stroke-width="2"/>
-  <circle cx="105" cy="170" r="7" fill="#0E6160"/>
-  <g font-family="Archivo, Arial, sans-serif">
-    <text x="145" y="179" font-size="16" letter-spacing="3" fill="#0E6160">SOFTWARE ENGINEER · BUILDER · CYBERSECURITY</text>
-    <text x="140" y="300" font-size="106" letter-spacing="-6" fill="#1F2A30">Dexter Brylle</text>
-    <text x="145" y="368" font-size="28" fill="#0E6160">Site Reliability Engineer</text>
-    <text x="145" y="432" font-size="24" fill="#57676E">Dependable software. Practical systems.</text>
-    <text x="145" y="590" font-size="18" fill="#57676E">dexterbrylle.com</text>
+  <defs>
+    <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse">
+      <circle cx="8" cy="8" r="1.1" fill="#1F1F28" fill-opacity=".16"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="#F5F2EA"/>
+  <rect y="120" width="1200" height="350" fill="url(#dots)"/>
+  <path d="M0 120.5h1200M0 470.5h1200" stroke="#D6D2C7"/>
+  <g font-family="Geist, Arial, sans-serif">
+    <rect x="72" y="42" width="102" height="48" rx="6" fill="#FFE278"/>
+    <text x="82" y="78" font-size="38" font-weight="600" letter-spacing="-1.2" fill="#1F1F28">dbm.</text>
+    <text x="192" y="76" font-size="24" font-weight="600" letter-spacing="-0.2" fill="#1F1F28">Dexter Brylle</text>
+    <text font-size="64" font-weight="600" letter-spacing="-1.9" fill="#1F1F28">
+      <tspan x="80" y="300">I keep systems reliable, and</tspan>
+      <tspan x="80" y="372">build the tools around them.</tspan>
+    </text>
   </g>
-  <path d="M1070 588v-22m-7 8 7-8 7 8" stroke="#57676E" fill="none" stroke-width="2"/>
+  <g font-family="Geist Mono, Menlo, monospace" font-size="20" fill="#54546D">
+    <text x="80" y="218">software engineer / sre / builder</text>
+    <text x="80" y="552">notes · building · profile</text>
+    <text x="1120" y="552" text-anchor="end">dexterbrylle.com</text>
+  </g>
 </svg>

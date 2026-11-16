@@ -1,6 +1,7 @@
 ---
-import { z } from "astro:content";
+import { z } from "astro/zod";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Arrow from "../components/Arrow.astro";
 import homelab from "../data/homelab.json";
 import { site } from "../data/site.json";
 const items = z.array(z.object({
@@ -10,13 +11,35 @@ const items = z.array(z.object({
 })).parse(homelab.items);
 ---
 <BaseLayout title={`${homelab.title} | ${site.name}`} description={homelab.description} noindex={items.length === 0}>
-  <header class="page-heading"><h1>{homelab.title}</h1><p>{homelab.description}</p></header>
-  <section class="status-board" aria-labelledby="telemetry-title">
-    <div class="status-row"><h2 id="telemetry-title">{homelab.telemetry.label}</h2><span class="status-label" data-status="unknown">{homelab.telemetry.state}</span></div>
-    <p>{homelab.telemetry.description}</p>
-  </section>
-  <section class="chart-section" aria-labelledby="inventory-title">
-    <div class="section-heading"><h2 id="inventory-title">{homelab.inventoryTitle}</h2></div>
-    {items.length ? <div class="status-board">{items.map((item) => <article class="status-row"><div><h3>{item.name}</h3><p>{item.description}</p></div><span class="status-label" data-status={item.status}>{homelab.statusLabels[item.status]}</span></article>)}</div> : <div class="empty-state"><h2>{homelab.emptyState.title}</h2><p>{homelab.emptyState.description}</p><a class="empty-onward" href={homelab.emptyState.onward.href}>{homelab.emptyState.onward.label}</a></div>}
-  </section>
+  <div class="wrap">
+    <header class="page-head">
+      <h1>{homelab.title}</h1>
+      <p>{homelab.summary}</p>
+    </header>
+    <section class="row" aria-labelledby="setup-title">
+      <h2 class="row-label" id="setup-title"><span class="ink">setup</span><span>{homelab.tools.join(" · ")}</span></h2>
+      <div class="row-body measure">
+        <div class="loop"><div class="loop-line">
+          {homelab.flow.map((step, i) => <>{i > 0 && <span class="sep"><Arrow /></span>}<span class="node">{step}</span></>)}
+        </div></div>
+        <p class="muted spaced">{homelab.telemetry.label}: {homelab.telemetry.state.toLowerCase()}. {homelab.telemetry.description}</p>
+      </div>
+    </section>
+    <section class="row" aria-labelledby="inventory-title">
+      <h2 class="row-label" id="inventory-title">{homelab.inventoryTitle.toLowerCase()}</h2>
+      <div class="row-body measure">
+        {items.length ? (
+          <dl class="defs">
+            {items.map((item) => <><dt>{item.name}</dt><dd class="split"><span>{item.description}</span><span class="status" data-status={item.status}>{homelab.statusLabels[item.status].toLowerCase()}</span></dd></>)}
+          </dl>
+        ) : (
+          <div class="empty">
+            <h2>{homelab.emptyState.title}</h2>
+            <p>{homelab.emptyState.description}</p>
+            <a class="more-link" href={homelab.emptyState.onward.href}>{homelab.emptyState.onward.label.toLowerCase()} <Arrow /></a>
+          </div>
+        )}
+      </div>
+    </section>
+  </div>
 </BaseLayout>
