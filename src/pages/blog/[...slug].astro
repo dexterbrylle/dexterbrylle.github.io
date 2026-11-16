@@ -1,8 +1,0 @@
----
-import { getCollection } from "astro:content";
-import LegacyRedirect from "../../components/LegacyRedirect.astro";
-export async function getStaticPaths() {
-  return (await getCollection("blog")).map((post) => ({ params: { slug: post.id.replace(/\.md$/, "") } }));
-}
----
-<LegacyRedirect destination={`/notes/${Astro.params.slug}/`} />

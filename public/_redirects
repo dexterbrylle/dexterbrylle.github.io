@@ -1,0 +1,10 @@
+/gear /about/ 301
+/gear/ /about/ 301
+/stack /about/ 301
+/stack/ /about/ 301
+/certifications /about/ 301
+/certifications/ /about/ 301
+/blog /notes/ 301
+/blog/ /notes/ 301
+/blog/:slug/ /notes/:slug/ 301
+/blog/:slug /notes/:slug/ 301
