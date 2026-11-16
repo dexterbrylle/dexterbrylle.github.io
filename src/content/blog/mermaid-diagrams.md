@@ -3,6 +3,7 @@ title: "Visualizing System Architecture with Mermaid"
 description: "A demonstration of Mermaid diagrams for technical documentation—flowcharts, sequence diagrams, and entity relationships rendered at build time."
 pubDate: 2026-05-08
 tags: ["tools", "documentation", "diagrams"]
+unlisted: true
 ---
 
 Sometimes explaining a system is easier with a diagram. I've started using Mermaid to embed diagrams directly in Markdown—no external tools, no image exports, just code that renders.

@@ -249,7 +249,8 @@ a.plain, .plain a { text-decoration: none; }
 .date { font-family: var(--mono); font-size: 0.765rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .more-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 16px; min-height: 44px; font-family: var(--mono); font-size: 0.765rem; }
 @media (max-width: 760px) {
-  .entries li { flex-direction: column-reverse; gap: 2px; }
+  .entries li { flex-direction: column-reverse; align-items: stretch; gap: 2px; }
+  .entries .entry-main { flex: none; }
 }
 
 /* ---------- cards (building) ---------- */
