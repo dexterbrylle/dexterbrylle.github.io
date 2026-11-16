@@ -4,6 +4,13 @@ import rehypeMermaid from "rehype-mermaid";
 import { unified } from "@astrojs/markdown-remark";
 import homelab from "./src/data/homelab.json" with { type: "json" };
 import { hairlineLight, hairlineDark } from "./src/lib/shiki-themes.mjs";
+import { readdirSync, readFileSync } from "node:fs";
+
+// Notes marked `unlisted: true` in frontmatter stay out of the sitemap.
+const notesDir = new URL("./src/content/blog/", import.meta.url);
+const unlistedNotes = readdirSync(notesDir)
+  .filter((file) => file.endsWith(".md") && /^unlisted:\s*true\s*$/m.test(readFileSync(new URL(file, notesDir), "utf8").split("---")[1] ?? ""))
+  .map((file) => `/notes/${file.replace(/\.md$/, "")}/`);
 
 // Preserve the SVG's natural dimensions so wider panels never shrink its labels.
 function rehypeMermaidPanels() {
@@ -54,6 +61,7 @@ export default defineConfig({
   integrations: [sitemap({ filter: (page) => {
     const pathname = new URL(page).pathname;
     return !pathname.startsWith("/blog/")
+      && !unlistedNotes.includes(pathname)
       && pathname !== "/404/"
       && pathname !== "/404.html"
       && !(pathname === "/homelab/" && homelab.items.length === 0);
