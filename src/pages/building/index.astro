@@ -6,7 +6,7 @@ import Arrow from "../../components/Arrow.astro";
 import { building, site } from "../../data/site.json";
 const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order);
 ---
-<BaseLayout title={`Personal projects & experiments | ${site.name}`} description={building.description}>
+<BaseLayout title={`Personal iOS apps: Fillo & Eave | ${site.name}`} description="Explore Dexter Brylle's personal iOS apps: Fillo, a car expense tracker, and Eave, notes and checklists for the iPhone Lock Screen.">
   <div class="wrap">
     <header class="page-head">
       <h1>{building.title}</h1>

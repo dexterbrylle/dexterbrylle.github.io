@@ -21,5 +21,6 @@ const years = [...new Set(posts.map((post) => post.data.pubDate.getUTCFullYear()
         </section>
       );
     })}
+    <p class="more-link"><a href="/rss.xml">subscribe to notes via RSS</a></p>
   </div>
 </BaseLayout>

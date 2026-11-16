@@ -10,7 +10,7 @@ const items = z.array(z.object({
   status: z.enum(["unknown", "operational", "degraded", "outage"]),
 })).parse(homelab.items);
 ---
-<BaseLayout title={`${homelab.title} | ${site.name}`} description={homelab.description} noindex={items.length === 0}>
+<BaseLayout title={`${homelab.title}: Infrastructure experiments | ${site.name}`} description={homelab.description} noindex={items.length === 0}>
   <div class="wrap">
     <header class="page-head">
       <h1>{homelab.title}</h1>

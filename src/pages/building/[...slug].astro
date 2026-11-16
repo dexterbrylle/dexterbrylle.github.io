@@ -9,8 +9,12 @@ export async function getStaticPaths() {
 }
 const { project } = Astro.props;
 const { Content } = await render(project);
+const slug = project.id.replace(/\.md$/, "");
+const appStore = project.data.links.find((link) => new URL(link.href).hostname === "apps.apple.com");
 ---
-<BaseLayout title={`${project.data.title} | ${site.name}`} description={project.data.description} image={project.data.preview ? new URL(project.data.preview.src, Astro.site).href : undefined}>
+<BaseLayout title={`${project.data.seoTitle ?? project.data.title} | ${site.name}`} description={project.data.description} image={`/og/building/${slug}.png`} imageAlt={`${project.data.title}. ${project.data.description}`}
+  breadcrumbs={[{ name: "Home", path: "/" }, { name: "Building", path: "/building/" }, { name: project.data.title, path: `/building/${slug}/` }]}
+  application={appStore ? { name: project.data.title, description: project.data.description, installUrl: appStore.href } : undefined}>
   <div class="wrap">
     <div class="row article-head">
       <div class="row-label"><a class="back" href="/building/"><Arrow dir="left" /> building</a></div>

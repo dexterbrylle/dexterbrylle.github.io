@@ -67,8 +67,8 @@
     }
   ],
   "home": {
-    "title": "Dexter Brylle | Notes & personal projects",
-    "description": "Dexter Brylle's working notebook and personal projects. Notes on software, systems, and security, alongside Fillo, Eave, and experiments in building useful things.",
+    "title": "Dexter Brylle | Software, security & things I build",
+    "description": "I'm Dexter Brylle, a software and security engineer. I build dependable systems and iOS apps, including Fillo and Eave, and write notes on the work.",
     "kicker": "You are here",
     "recentTitle": "Recent notes",
     "allNotesLabel": "All notes",

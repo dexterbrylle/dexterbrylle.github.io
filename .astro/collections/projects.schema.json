@@ -5,6 +5,9 @@
     "title": {
       "type": "string"
     },
+    "seoTitle": {
+      "type": "string"
+    },
     "description": {
       "type": "string"
     },

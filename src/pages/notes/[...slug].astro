@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from "astro:content";
+import { modifiedDate } from "../../lib/content-dates.mjs";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Arrow from "../../components/Arrow.astro";
 import { site } from "../../data/site.json";
@@ -20,7 +21,11 @@ const minutes = Math.max(1, Math.round(words / 220));
 const iso = (date: Date) => date.toISOString().slice(0, 10);
 const link = (entry: typeof post) => `/notes/${entry.id.replace(/\.md$/, "")}/`;
 ---
-<BaseLayout title={`${post.data.title} | ${site.name}`} description={post.data.description} type="article" publishedTime={post.data.pubDate.toISOString()} headline={post.data.title}>
+<BaseLayout title={`${post.data.seoTitle ?? post.data.title} | ${site.name}`} description={post.data.description} type="article" publishedTime={post.data.pubDate.toISOString()} headline={post.data.title}
+  modifiedTime={(post.data.updatedDate?.toISOString() ?? modifiedDate(post.filePath ?? `src/content/blog/${slug}.md`)) ?? post.data.pubDate.toISOString()}
+  keywords={post.data.tags} wordCount={words}
+  image={`/og/notes/${slug}.png`} imageAlt={`${post.data.title}. ${post.data.description}`}
+  breadcrumbs={[{ name: "Home", path: "/" }, { name: "Notes", path: "/notes/" }, { name: post.data.title, path: link(post) }]}>
   <div class="wrap">
     <div class="row article-head">
       <div class="row-label"><a class="back" href="/notes/"><Arrow dir="left" /> notes</a></div>

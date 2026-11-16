@@ -1,7 +1,7 @@
 {
   "title": "Homelab",
   "kicker": "Lab status",
-  "description": "A place to chart the lab and its services.",
+  "description": "Dexter Brylle's infrastructure experiments with Proxmox and Tailscale. Service inventory is empty and live telemetry is not connected yet.",
   "summary": "Infrastructure experiments, useful automation, and lessons from running things.",
   "cardLabel": "03 / infrastructure",
   "flow": [

@@ -5,10 +5,17 @@
     "title": {
       "type": "string"
     },
+    "seoTitle": {
+      "type": "string"
+    },
     "description": {
       "type": "string"
     },
     "pubDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedDate": {
       "type": "string",
       "format": "date-time"
     },
