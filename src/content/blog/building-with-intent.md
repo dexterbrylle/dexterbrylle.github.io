@@ -1,5 +1,6 @@
 ---
 title: "Building with Intent"
+seoTitle: "Building with Intent: Small, focused software"
 description: "On the value of small, focused tools built for specific problems."
 pubDate: 2026-05-09
 tags: ["software", "philosophy"]

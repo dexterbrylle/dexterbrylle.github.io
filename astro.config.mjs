@@ -1,10 +1,12 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
+import { readdirSync, readFileSync } from "node:fs";
+import { modifiedDate } from "./src/lib/content-dates.mjs";
+import { rasterizeOg } from "./scripts/rasterize-og.mjs";
 import rehypeMermaid from "rehype-mermaid";
 import { unified } from "@astrojs/markdown-remark";
 import homelab from "./src/data/homelab.json" with { type: "json" };
 import { hairlineLight, hairlineDark } from "./src/lib/shiki-themes.mjs";
-import { readdirSync, readFileSync } from "node:fs";
 
 // Notes marked `unlisted: true` in frontmatter stay out of the sitemap.
 const notesDir = new URL("./src/content/blog/", import.meta.url);
@@ -57,15 +59,31 @@ function rehypeMermaidPanels() {
   };
 }
 
+const routeSources = new Map([
+  ["/", ["src/pages/index.astro", "src/data/site.json", "src/content/blog", "src/content/projects"]],
+  ["/about/", ["src/pages/about.astro", "src/data/profile.json"]],
+  ["/notes/", ["src/pages/notes/index.astro", "src/data/site.json", "src/content/blog"]],
+  ["/building/", ["src/pages/building/index.astro", "src/data/site.json", "src/content/projects"]],
+  ...(homelab.items.length ? [["/homelab/", ["src/pages/homelab.astro", "src/data/homelab.json"]]] : []),
+]);
+for (const [collection, section] of [["blog", "notes"], ["projects", "building"]]) {
+  for (const file of readdirSync(`src/content/${collection}`).filter((file) => file.endsWith(".md") && !file.startsWith("_"))) {
+    routeSources.set(`/${section}/${file.replace(/\.md$/, "")}/`, [`src/content/${collection}/${file}`]);
+  }
+}
+
 export default defineConfig({
-  integrations: [sitemap({ filter: (page) => {
-    const pathname = new URL(page).pathname;
-    return !pathname.startsWith("/blog/")
-      && !unlistedNotes.includes(pathname)
-      && pathname !== "/404/"
-      && pathname !== "/404.html"
-      && !(pathname === "/homelab/" && homelab.items.length === 0);
-  } })],
+  integrations: [
+    sitemap({
+      filter: (page) => routeSources.has(new URL(page).pathname) && !unlistedNotes.includes(new URL(page).pathname),
+      serialize: (item) => {
+        const paths = routeSources.get(new URL(item.url).pathname);
+        const lastmod = paths && modifiedDate(...paths);
+        return lastmod ? { ...item, lastmod } : item;
+      },
+    }),
+    { name: "hairline-og", hooks: { "astro:build:done": async ({ dir }) => { await rasterizeOg(dir); } } },
+  ],
   site: "https://dexterbrylle.com",
   output: "static",
   // Keep v6 whitespace handling between inline elements (v7 defaults to "jsx").

@@ -1,5 +1,6 @@
 ---
 title: "First Note"
+seoTitle: "First Note: A software and systems notebook"
 description: "A short marker for the beginning of this notebook."
 pubDate: 2026-05-07
 tags: ["personal", "software"]

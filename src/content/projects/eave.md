@@ -1,5 +1,6 @@
 ---
 title: "Eave"
+seoTitle: "Eave: Lock Screen notes and checklists"
 description: "Notes and checklists pinned to your iPhone Lock Screen. A small place for the thing you need to remember today."
 status: "Live"
 order: 2

@@ -1,15 +1,23 @@
 ---
 import data from "../data/site.json";
+import profile from "../data/profile.json";
 import { BUILD_ID } from "../lib/build";
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
+  modifiedTime?: string;
+  keywords?: string[];
+  wordCount?: number;
+  breadcrumbs?: { name: string; path: string }[];
+  application?: { name: string; description: string; installUrl: string };
   type?: "website" | "article";
   publishedTime?: string;
   headline?: string;
   noindex?: boolean;
+  canonicalPath?: string;
 }
 
 const { site, nav, footer, labels } = data;
@@ -18,12 +26,16 @@ const {
   title = site.name,
   description = site.statement,
   image = `${origin}/og-image.png`,
+  imageAlt = "Dexter Brylle. I keep systems reliable, and build the tools around them.",
+  modifiedTime, keywords, wordCount, breadcrumbs, application,
   type = "website",
   publishedTime,
   headline = title,
   noindex = false,
+  canonicalPath = Astro.url.pathname,
 } = Astro.props;
-const pathname = `${Astro.url.pathname.replace(/\/$/, "")}/`;
+const pathname = canonicalPath.endsWith(".html") ? canonicalPath : `${canonicalPath.replace(/\/$/, "")}/`;
+const imageUrl = new URL(image, origin).href;
 const canonical = new URL(pathname, origin).href;
 const active = (path: string) => path === "/" ? pathname === path : pathname.startsWith(path);
 const primaryNav = nav.filter((item) => item.primary && item.path !== "/");
@@ -37,16 +49,32 @@ const graph = {
       "@type": "Person", "@id": personId, name: site.fullName,
       givenName: site.givenName, familyName: site.familyName,
       jobTitle: site.jobTitle, url: origin,
+      knowsAbout: profile.tools.flatMap((tool) => tool.items.split(", ")),
       sameAs: data.contact.filter((link) => link.href.startsWith("https:")).map((link) => link.href),
     },
     {
       "@type": "WebPage", "@id": `${canonical}#webpage`, url: canonical,
-      name: title, description, isPartOf: { "@id": `${origin}/#website` }, about: { "@id": personId },
+      name: title, description, inLanguage: "en",
+      ...(breadcrumbs ? { breadcrumb: { "@id": `${canonical}#breadcrumbs` } } : {}),
+      ...(application ? { mainEntity: { "@id": `${canonical}#application` } } : {}),
+      isPartOf: { "@id": `${origin}/#website` }, about: { "@id": personId },
     },
     ...(type === "article" ? [{
       "@type": "Article", "@id": `${canonical}#article`, headline, description,
-      url: canonical, image, datePublished: publishedTime,
+      url: canonical, image: imageUrl, datePublished: publishedTime,
+      dateModified: modifiedTime, keywords, inLanguage: "en", wordCount,
       author: { "@id": personId }, mainEntityOfPage: { "@id": `${canonical}#webpage` },
+    }] : []),
+    ...(breadcrumbs ? [{
+      "@type": "BreadcrumbList", "@id": `${canonical}#breadcrumbs`,
+      itemListElement: breadcrumbs.map((item, i) => ({
+        "@type": "ListItem", position: i + 1, name: item.name, item: new URL(item.path, origin).href,
+      })),
+    }] : []),
+    ...(application ? [{
+      "@type": "MobileApplication", "@id": `${canonical}#application`,
+      name: application.name, description: application.description,
+      operatingSystem: "iOS", installUrl: application.installUrl,
     }] : []),
   ],
 };
@@ -62,7 +90,8 @@ const graph = {
     <link rel="canonical" href={canonical} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:alt" content={imageAlt} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:url" content={canonical} />
@@ -70,10 +99,13 @@ const graph = {
     <meta property="og:site_name" content={site.name} />
     <meta property="og:locale" content="en_US" />
     {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+    {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
+    <link rel="alternate" type="application/rss+xml" title="Dexter Brylle’s notes" href="/rss.xml" />
     <meta name="theme-color" content="#f5f2ea" />
     <link rel="icon" href="/favicon.svg" />
     <link rel="preload" href="/fonts/geist-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />

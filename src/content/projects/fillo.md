@@ -1,5 +1,6 @@
 ---
 title: "Fillo"
+seoTitle: "Fillo: Car expense tracker"
 description: "A car expense tracker for fuel, charging, maintenance, and the costs ahead. Your records stay on your device."
 status: "Live"
 order: 1

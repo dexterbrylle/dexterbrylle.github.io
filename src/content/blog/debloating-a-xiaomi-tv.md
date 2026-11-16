@@ -1,5 +1,6 @@
 ---
 title: "The TV That Talked Too Much"
+seoTitle: "Xiaomi Mi TV P1: Reducing ads and telemetry with ADB"
 description: "A working note on reducing ads and telemetry on a Xiaomi Mi TV P1 with ADB, including the mistakes I made along the way."
 pubDate: 2026-11-05
 tags: ["security", "privacy", "hardware"]

@@ -5,7 +5,7 @@ import {createMarkdownProcessor} from '@astrojs/markdown-remark';
 import config from '../astro.config.mjs';
 
 const base = process.env.VERIFY_URL || 'http://127.0.0.1:4321';
-const output = process.env.VERIFY_OUTPUT || '/tmp/dexter-reading-qa';
+const output = process.env.VERIFY_OUTPUT || new URL('../artifacts/reading', import.meta.url).pathname;
 await mkdir(output, {recursive: true});
 const processor = await createMarkdownProcessor(config.markdown);
 const fixture = await processor.render([

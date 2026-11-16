@@ -6,8 +6,10 @@ const blog = defineCollection({
   loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/blog" }),
   schema: z.object({
     title: z.string(),
+    seoTitle: z.string().optional(),
     description: z.string(),
     pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()),
     // Unlisted notes still build but stay out of lists, feeds, the sitemap and search.
     unlisted: z.boolean().default(false),
@@ -18,6 +20,7 @@ const projects = defineCollection({
   loader: glob({ pattern: "**/[^_]*.md", base: "./src/content/projects" }),
   schema: z.object({
     title: z.string(),
+    seoTitle: z.string().optional(),
     description: z.string(),
     status: z.enum(["Live", "Coming soon", "Experiment", "Paused"]),
     order: z.number().default(0),

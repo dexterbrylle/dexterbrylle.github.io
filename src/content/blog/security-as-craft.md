@@ -1,5 +1,6 @@
 ---
 title: "Security as Craft"
+seoTitle: "Security as Craft: Defaults, ownership and review"
 description: "A working note on treating security as part of engineering practice."
 pubDate: 2026-05-06
 tags: ["security", "engineering"]
