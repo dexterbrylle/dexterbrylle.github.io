@@ -14,9 +14,9 @@ A fast, minimal personal site featuring:
 - **Notes** — Markdown writing with Mermaid diagram support
 - **Building** — Fillo, Eave, and space for future projects and experiments
 - **Profile** — Bio, career, and contact information
-- **More** — Gear, stack, certifications, and homelab
+- **Homelab** — Infrastructure experiments and an inventory awaiting documentation
 
-Built as a static site. Small scripts handle theme switching, navigation, article contents, and the gear viewer. Mermaid diagrams render to SVG at build time. The design ("Hairline", see `DESIGN.md`) uses Geist and Geist Mono, one clay accent, hairline rules, light and dark themes, and CSS-only view transitions.
+Built as a static site. Small scripts handle theme switching, navigation, and article contents. Mermaid diagrams render to SVG at build time. The design ("Hairline", see `DESIGN.md`) uses Geist and Geist Mono, one sunflower accent, hairline rules, light and dark themes, and CSS-only view transitions.
 
 ---
 
@@ -47,6 +47,8 @@ tags: ["software"]
 Your content here.
 ```
 
+Optionally set `seoTitle` for a more specific search title while keeping the visible note heading. Set `updatedDate` to a real revision date. Otherwise Article `dateModified` uses the last Git commit touching the note, with `pubDate` as a fallback when Git history is unavailable. Sitemap `lastmod` uses Git dates and is omitted without history. Builds never substitute the current time.
+
 Mermaid diagrams work inline:
 
 ````markdown
@@ -61,7 +63,7 @@ flowchart TD
 
 ## Projects
 
-Project entries live in `src/content/projects/`. Each Markdown file becomes a page at `/building/<filename>/` and appears in the project index. The first three entries, sorted by `order`, also appear on the homepage.
+Project entries live in `src/content/projects/`. Each Markdown file becomes a page at `/building/<filename>/` and appears in the project index. The first two entries, sorted by `order`, also appear on the homepage.
 
 ```markdown
 ---
@@ -78,6 +80,8 @@ links:
 Write about the project here.
 ```
 
+Optionally add `seoTitle` for a more specific search title while keeping the visible project name.
+
 Statuses are `Live`, `Coming soon`, `Experiment`, and `Paused`. Optionally add an `icon` path and a `preview` object with `src` and `alt` fields. Put images in `public/images/projects/`; use a path such as `/images/projects/example.webp` in frontmatter.
 
 Notes remain in `src/content/blog/` and publish at `/notes/<filename>/`. The existing `/blog/` URLs redirect to Notes. To publish either kind of entry, add the Markdown file and push to `main`.
@@ -89,13 +93,20 @@ MERMAID_BROWSER_CHANNEL=chrome npm run dev
 MERMAID_BROWSER_CHANNEL=chrome npm run build
 ```
 
-IBM Plex Sans and IBM Plex Mono are self-hosted, so the site makes no Google Fonts requests. Fenced code blocks with a language label, such as `js`, `ts`, `json`, or `sh`, get syntax highlighting in both themes. Mermaid labels use Plex Sans at their natural size; diagram articles use the available width without widening the prose. On smaller screens, focus a diagram and use the arrow keys to pan.
+Geist and Geist Mono are self-hosted, so the site makes no Google Fonts requests. Fenced code blocks with a language label, such as `js`, `ts`, `json`, or `sh`, get syntax highlighting in both themes. Mermaid labels use Geist at their natural size; diagram articles use the available width without widening the prose. On smaller screens, focus a diagram and use the arrow keys to pan.
 
 To verify typography, highlighting, and diagram layout against a running local server:
 
 ```sh
 MERMAID_BROWSER_CHANNEL=chrome VERIFY_URL=http://127.0.0.1:4321 node scripts/verify-reading.mjs
+MERMAID_BROWSER_CHANNEL=chrome VERIFY_URL=http://127.0.0.1:4321 node scripts/verify-seo.mjs
 ```
+
+Notes are also available at `/rss.xml`, linked in every page's head and on the notes index. Each build creates 1200×630 PNG social images at `/og/notes/<slug>.png` and `/og/building/<slug>.png`, plus the site-wide `/og-image.png` fallback. All use the self-hosted Geist fonts and the Hairline palette.
+
+Cloudflare applies `public/_redirects` and `public/_headers` from the built artifact. The deleted gear, stack, and certifications routes permanently redirect to Profile; legacy blog URLs permanently redirect to Notes. Astro preview does not emulate these edge rules. Confirm their status codes, destinations, and cache headers on a Pages preview deployment.
+
+`verify-seo.mjs` reads every built HTML file, including `404.html`, and checks metadata, social PNGs, schema types and references, exact sitemap membership, RSS, headings, images, links, and mobile overflow. `verify-reading.mjs` writes screenshots to `artifacts/reading/` by default. Keep the repository and all build/QA output on `/Volumes/Codex` on this machine.
 
 ---
 
@@ -105,7 +116,7 @@ Cloudflare Pages builds and deploys pushes to `main` directly through its Git in
 
 Deployment URL: https://dexterbrylle.pages.dev/
 
-The Pages project uses these build settings:
+Expected Pages build settings, to be checked against the dashboard:
 
 | Setting | Value |
 |---------|-------|
@@ -114,9 +125,9 @@ The Pages project uses these build settings:
 | Build command | `npx playwright install chromium && npm run build` |
 | Build output directory | `dist` |
 | Root directory | Repository root |
-| Environment variable | `NODE_VERSION=22` |
+| Environment variable | `NODE_VERSION=24` |
 
-Cloudflare installs npm dependencies before the build command. Chromium is required to render Mermaid diagrams to SVG. The site uses Astro's static output and does not need a Cloudflare SSR adapter.
+Cloudflare installs npm dependencies before the build command. Chromium is required to render Mermaid diagrams and social images. The site uses Astro's static output and does not need a Cloudflare SSR adapter.
 
 To finish the custom domain migration, add `dexterbrylle.com` through the Pages project's custom domains settings and apply the DNS change Cloudflare requests. Verify HTTPS and the diagram pages on the custom domain before unpublishing the old site in GitHub's repository Settings → Pages.
 
