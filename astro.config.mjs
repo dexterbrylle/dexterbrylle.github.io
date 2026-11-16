@@ -1,12 +1,18 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { modifiedDate } from "./src/lib/content-dates.mjs";
 import { rasterizeOg } from "./scripts/rasterize-og.mjs";
 import rehypeMermaid from "rehype-mermaid";
 import { unified } from "@astrojs/markdown-remark";
 import homelab from "./src/data/homelab.json" with { type: "json" };
 import { hairlineLight, hairlineDark } from "./src/lib/shiki-themes.mjs";
+
+// Notes marked `unlisted: true` in frontmatter stay out of the sitemap.
+const notesDir = new URL("./src/content/blog/", import.meta.url);
+const unlistedNotes = readdirSync(notesDir)
+  .filter((file) => file.endsWith(".md") && /^unlisted:\s*true\s*$/m.test(readFileSync(new URL(file, notesDir), "utf8").split("---")[1] ?? ""))
+  .map((file) => `/notes/${file.replace(/\.md$/, "")}/`);
 
 // Preserve the SVG's natural dimensions so wider panels never shrink its labels.
 function rehypeMermaidPanels() {
@@ -69,7 +75,7 @@ for (const [collection, section] of [["blog", "notes"], ["projects", "building"]
 export default defineConfig({
   integrations: [
     sitemap({
-      filter: (page) => routeSources.has(new URL(page).pathname),
+      filter: (page) => routeSources.has(new URL(page).pathname) && !unlistedNotes.includes(new URL(page).pathname),
       serialize: (item) => {
         const paths = routeSources.get(new URL(item.url).pathname);
         const lastmod = paths && modifiedDate(...paths);

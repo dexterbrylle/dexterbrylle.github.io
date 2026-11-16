@@ -7,10 +7,14 @@ import { site } from "../../data/site.json";
 
 export async function getStaticPaths() {
   const posts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-  return posts.map((post, i) => ({
-    params: { slug: post.id.replace(/\.md$/, "") },
-    props: { post, older: posts[i + 1], newer: posts[i - 1] },
-  }));
+  const listed = posts.filter((post) => !post.data.unlisted);
+  return posts.map((post) => {
+    const i = listed.indexOf(post);
+    return {
+      params: { slug: post.id.replace(/\.md$/, "") },
+      props: { post, older: i < 0 ? undefined : listed[i + 1], newer: i < 0 ? undefined : listed[i - 1] },
+    };
+  });
 }
 const { post, older, newer } = Astro.props;
 const { Content, headings } = await render(post);
@@ -21,7 +25,7 @@ const minutes = Math.max(1, Math.round(words / 220));
 const iso = (date: Date) => date.toISOString().slice(0, 10);
 const link = (entry: typeof post) => `/notes/${entry.id.replace(/\.md$/, "")}/`;
 ---
-<BaseLayout title={`${post.data.seoTitle ?? post.data.title} | ${site.name}`} description={post.data.description} type="article" publishedTime={post.data.pubDate.toISOString()} headline={post.data.title}
+<BaseLayout title={`${post.data.seoTitle ?? post.data.title} | ${site.name}`} description={post.data.description} type="article" publishedTime={post.data.pubDate.toISOString()} headline={post.data.title} noindex={post.data.unlisted}
   modifiedTime={(post.data.updatedDate?.toISOString() ?? modifiedDate(post.filePath ?? `src/content/blog/${slug}.md`)) ?? post.data.pubDate.toISOString()}
   keywords={post.data.tags} wordCount={words}
   image={`/og/notes/${slug}.png`} imageAlt={`${post.data.title}. ${post.data.description}`}

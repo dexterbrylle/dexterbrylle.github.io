@@ -8,7 +8,7 @@ import Arrow from "../components/Arrow.astro";
 import homelab from "../data/homelab.json";
 import { site, home } from "../data/site.json";
 
-const allPosts = (await getCollection("blog")).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const allPosts = (await getCollection("blog", ({ data }) => !data.unlisted)).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const posts = allPosts.slice(0, 4);
 const projects = (await getCollection("projects")).sort((a, b) => a.data.order - b.data.order).slice(0, 2);
 const note = home.fieldNote;
@@ -27,7 +27,6 @@ const note = home.fieldNote;
         <span class="name">{site.name}</span>
         <span>{home.identityLine}</span>
         <span>{home.location}</span>
-        <ContactLinks stacked />
       </div>
       <div class="intro">
         <p>{home.intro}</p>

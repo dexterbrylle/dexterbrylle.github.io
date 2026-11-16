@@ -1,6 +1,7 @@
 ---
 import data from "../data/site.json";
 import profile from "../data/profile.json";
+import { BUILD_ID } from "../lib/build";
 
 interface Props {
   title?: string;
@@ -118,9 +119,9 @@ const graph = {
         document.documentElement.dataset.themeMode = mode;
       })();
     </script>
-    <link rel="stylesheet" href="/styles/fonts.css" />
-    <link rel="stylesheet" href="/styles/global.css" />
-    <link rel="stylesheet" href="/styles/motion.css" />
+    <link rel="stylesheet" href={`/styles/fonts.css?v=${BUILD_ID}`} />
+    <link rel="stylesheet" href={`/styles/global.css?v=${BUILD_ID}`} />
+    <link rel="stylesheet" href={`/styles/motion.css?v=${BUILD_ID}`} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(graph).replace(/</g, "\\u003c")} />
   </head>
   <body>

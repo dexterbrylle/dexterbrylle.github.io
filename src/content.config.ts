@@ -11,6 +11,8 @@ const blog = defineCollection({
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
     tags: z.array(z.string()),
+    // Unlisted notes still build but stay out of lists, feeds, the sitemap and search.
+    unlisted: z.boolean().default(false),
   }),
 });
 

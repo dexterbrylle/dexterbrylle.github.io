@@ -155,7 +155,7 @@ try {
       assert.deepEqual(crumbs.itemListElement.map((item) => item.item), [`${origin}/`, `${origin}/${section}/`, facts.canonical]);
       assert.deepEqual(crumbs.itemListElement.map((item) => item.position), [1, 2, 3]);
       const gitDate = modifiedDate(`src/content/${note ? 'blog' : 'projects'}/${slug}.md`);
-      if (gitDate) assert.equal(Date.parse(listed.get(facts.canonical)), Date.parse(gitDate), `Git lastmod: ${route}`);
+      if (gitDate && indexablePage) assert.equal(Date.parse(listed.get(facts.canonical)), Date.parse(gitDate), `Git lastmod: ${route}`);
     }
     if (note) {
       const article = graph.find((node) => node['@type'] === 'Article');
@@ -190,7 +190,7 @@ try {
     if (xml.querySelector('parsererror')) throw new Error('Invalid RSS XML');
     return [...xml.querySelectorAll('item > link')].map((node) => node.textContent);
   }, feed);
-  assert.deepEqual(new Set(feedLinks), new Set(routes.filter((route) => route.startsWith('/notes/') && route !== '/notes/').map((route) => `${origin}${route}`)));
+  assert.deepEqual(new Set(feedLinks), new Set(routes.filter((route) => route.startsWith('/notes/') && route !== '/notes/' && listed.has(`${origin}${route}`)).map((route) => `${origin}${route}`)));
   await page.goto(`${base}/notes/`);
   assert.equal(await page.locator('main a[href="/rss.xml"]').count(), 1);
   console.log(`SEO verification passed: ${routes.length} HTML routes, ${indexable} indexable pages; redirects, cache configuration, metadata, PNG dimensions, RSS, schema types/properties/references, headings, links, images, sitemap dates and mobile overflow checked.`);

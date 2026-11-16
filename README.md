@@ -102,7 +102,7 @@ MERMAID_BROWSER_CHANNEL=chrome VERIFY_URL=http://127.0.0.1:4321 node scripts/ver
 MERMAID_BROWSER_CHANNEL=chrome VERIFY_URL=http://127.0.0.1:4321 node scripts/verify-seo.mjs
 ```
 
-Notes are also available at `/rss.xml`, linked in every page's head and on the notes index. Each build creates 1200×630 PNG social images at `/og/notes/<slug>.png` and `/og/building/<slug>.png`, plus the site-wide `/og-image.png` fallback. All use the self-hosted Geist fonts and the Hairline palette.
+Notes marked `unlisted: true` still build and receive social images, but stay out of lists, RSS, the sitemap and search. Listed notes are also available at `/rss.xml`, linked in every page's head and on the notes index. Each build creates 1200×630 PNG social images at `/og/notes/<slug>.png` and `/og/building/<slug>.png`, plus the site-wide `/og-image.png` fallback. All use the self-hosted Geist fonts and the Hairline palette.
 
 Cloudflare applies `public/_redirects` and `public/_headers` from the built artifact. The deleted gear, stack, and certifications routes permanently redirect to Profile; legacy blog URLs permanently redirect to Notes. Astro preview does not emulate these edge rules. Confirm their status codes, destinations, and cache headers on a Pages preview deployment.
 
