@@ -1,0 +1,67 @@
+{
+  "report": [
+    {
+      "width": 1440,
+      "theme": "light",
+      "ink": "#1f1f28",
+      "canvasPixels": 2850
+    },
+    {
+      "width": 1440,
+      "theme": "dark",
+      "ink": "#dcd7ba",
+      "canvasPixels": 2850
+    },
+    {
+      "width": 1440,
+      "cycle": {
+        "detours": 1,
+        "blockedVisits": 0,
+        "failedFrames": 89,
+        "yellowFrames": 4,
+        "maxYellow": 1,
+        "duration": 3911.39999999851,
+        "minFrame": 15.600000001490116,
+        "changes": 75,
+        "shifts": 0
+      }
+    },
+    {
+      "width": 1440,
+      "offscreenDraws": 0,
+      "offscreenTaskSeconds": 0.040475000000000004
+    },
+    {
+      "width": 375,
+      "theme": "light",
+      "ink": "#1f1f28",
+      "canvasPixels": 720
+    },
+    {
+      "width": 375,
+      "theme": "dark",
+      "ink": "#dcd7ba",
+      "canvasPixels": 720
+    },
+    {
+      "width": 375,
+      "cycle": {
+        "detours": 1,
+        "blockedVisits": 0,
+        "failedFrames": 85,
+        "yellowFrames": 2,
+        "maxYellow": 1,
+        "duration": 3749.7000000029802,
+        "minFrame": 6.399999998509884,
+        "changes": 52,
+        "shifts": 0
+      }
+    },
+    {
+      "width": 375,
+      "offscreenDraws": 0,
+      "offscreenTaskSeconds": 0.053887
+    }
+  ],
+  "errors": []
+}

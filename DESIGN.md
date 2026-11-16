@@ -64,6 +64,12 @@ Read-mode site, so motion explains state and continuity; one authored moment (`p
 - **Feedback:** the highlighter swipe on links; the More/menu panel drops in (180ms).
 - **Reduced motion:** no animations or transitions; highlights and states change instantly, and the loop shows its final state.
 
+### Hero grid
+
+The home band illustrates routing around failure on its existing 16px dot grid. Eight ink packets move one cell every 150ms with three fading trail dots; phones below 760px use four packets at 190ms. Every 6–9s a node on a packet's route becomes a quiet ink cross. Packets take grid-aligned detours until it recovers after 3–4s with one 300ms sunflower blink. The blink is the only accent in this illustration. It carries no telemetry or labels.
+
+The canvas reads theme tokens and preserves the CSS grid's center-top alignment. Marks fade to a quarter of their usual opacity within the headline and kicker bounds, with a 24px feather. The grid is cached, rendering is capped at 30fps and 2× pixel density, and animation pauses offscreen or in hidden tabs. It starts after first paint and cleans up on navigation. Reduced motion, including live preference changes, leaves the static CSS dots; no JavaScript also retains that grid.
+
 ## Verification
 
 `scripts/verify-reading.mjs` checks font loading, code contrast in both themes, Mermaid scale and fit, contents behaviour and overflow. Run with `MERMAID_BROWSER_CHANNEL=chrome` on machines without Playwright's bundled Chromium. `scripts/verify-design.mjs` still asserts an earlier design (Archivo, `.mobile-menu`, `.reading-course`) and needs rewriting before it is useful again.
