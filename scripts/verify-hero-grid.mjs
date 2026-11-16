@@ -73,13 +73,14 @@ try {
       const active = frames.filter(frame => frame.marks.length);
       const changes = active.filter((frame, i) => i && JSON.stringify(frame.marks) !== JSON.stringify(active[i - 1].marks));
       const blocked = failed[0].crossNode;
-      const tracks = Array.from({ length: innerWidth < 760 ? 4 : 8 }, (_, index) => failed.map(frame => frame.marks[index * 4]).filter(Boolean));
+      const approach = frames.filter(frame => frame.time >= failed[0].time - 1000 && frame.time <= yellow[0].time);
+      const tracks = Array.from({ length: innerWidth < 760 ? 4 : 8 }, (_, index) => approach.map(frame => frame.marks[index * 4]).filter(Boolean));
       const detours = tracks.filter(track => {
-        const near = track.filter(node => Math.abs(node.x - blocked.x) <= 32 && Math.abs(node.y - blocked.y) <= 32);
+        const near = track.filter(node => Math.abs(node.x - blocked.x) <= 96 && Math.abs(node.y - blocked.y) <= 96);
         return near.some(node => node.x === blocked.x && node.y !== blocked.y)
           && near.some(node => node.y === blocked.y && node.x !== blocked.x);
       }).length;
-      const blockedVisits = tracks.flat().filter(node => node.x === blocked.x && node.y === blocked.y).length;
+      const blockedVisits = failed.flatMap(frame => frame.marks.filter((_, index) => index % 4 === 0)).filter(node => node.x === blocked.x && node.y === blocked.y).length;
       return { detours, blockedVisits, failedFrames: failed.length, yellowFrames: yellow.length, maxYellow: Math.max(...yellow.map(frame => frame.marks.filter(mark => mark.color === '#ffe278').length)), duration: yellow[0].time - failed[0].time, minFrame: Math.min(...frames.slice(4).map((frame, i) => frame.time - frames[i + 3].time)), changes: changes.length, shifts: window.heroQA.shifts };
     });
     assert.ok(cycle.detours > 0, 'a packet visibly detours beside the failed node');

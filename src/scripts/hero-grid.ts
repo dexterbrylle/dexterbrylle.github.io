@@ -137,7 +137,7 @@ function init() {
   function advance() {
     if (failure && time > failure.until + 300) failure = null;
     if (!failure && time >= nextFailure) {
-      const candidate = packets.flatMap(packet => packet.path.slice(2, 6)).find(node =>
+      const candidate = packets.flatMap(packet => packet.path.slice(2, -1).slice(0, 4)).find(node =>
         node.x > 0 && node.x < columns - 1 && node.y > 0 && node.y < rows - 1
         && packets.every(packet => !same(packet.node, node)));
       if (candidate) {

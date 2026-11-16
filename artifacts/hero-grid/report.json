@@ -17,19 +17,19 @@
       "cycle": {
         "detours": 1,
         "blockedVisits": 0,
-        "failedFrames": 89,
-        "yellowFrames": 4,
+        "failedFrames": 82,
+        "yellowFrames": 3,
         "maxYellow": 1,
-        "duration": 3911.39999999851,
-        "minFrame": 15.600000001490116,
-        "changes": 75,
+        "duration": 3674.89999999851,
+        "minFrame": 8.5,
+        "changes": 74,
         "shifts": 0
       }
     },
     {
       "width": 1440,
       "offscreenDraws": 0,
-      "offscreenTaskSeconds": 0.040475000000000004
+      "offscreenTaskSeconds": 0.042092
     },
     {
       "width": 375,
@@ -48,11 +48,11 @@
       "cycle": {
         "detours": 1,
         "blockedVisits": 0,
-        "failedFrames": 85,
+        "failedFrames": 70,
         "yellowFrames": 2,
         "maxYellow": 1,
-        "duration": 3749.7000000029802,
-        "minFrame": 6.399999998509884,
+        "duration": 3079.9000000059605,
+        "minFrame": 18.100000001490116,
         "changes": 52,
         "shifts": 0
       }
@@ -60,7 +60,7 @@
     {
       "width": 375,
       "offscreenDraws": 0,
-      "offscreenTaskSeconds": 0.053887
+      "offscreenTaskSeconds": 0.059393
     }
   ],
   "errors": []
