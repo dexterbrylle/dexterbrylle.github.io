@@ -1,461 +1,172 @@
 #!/usr/bin/env node
-// Procedurally renders the home-hero source video: a slowly rotating globe of
-// network nodes that loses one node and heals once per loop.
-//
-// Pixels are computed in plain JS and piped as raw 8-bit gray frames to ffmpeg.
-// No dependencies beyond Node 24 and an ffmpeg binary on PATH.
-//
-//   npm run video:hero
-//
-// Outputs (gitignored):
-//   assets-src/hero.mp4          H.264 yuv420p, CRF 20, no audio, +faststart
-//   assets-src/hero-preview.gif  480 wide, 12fps, for quick review
-//
-// Every time-varying term is a periodic function of the loop phase
-// p = frame / FRAMES in [0, 1), so frame FRAMES renders identically to frame 0.
-
-import { spawn } from 'node:child_process';
+// Deterministic original station artwork. Node 24 + ffmpeg, no rendering dependencies.
+import { spawn, spawnSync } from 'node:child_process';
+import { once } from 'node:events';
 import { createHash } from 'node:crypto';
-import { mkdirSync, statSync, readFileSync } from 'node:fs';
-import { dirname, join, relative } from 'node:path';
+import { mkdir, readFile, stat } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-// ---------------------------------------------------------------------------
-// Tunable constants
-// ---------------------------------------------------------------------------
-
-/** Frame size, rate and loop length. 24fps x 10s = 240 frames. */
-export const WIDTH = 960;
-export const HEIGHT = 540;
-export const FPS = 24;
-export const SECONDS = 10;
-export const FRAMES = FPS * SECONDS;
-
-/** PRNG seed for node placement and arc pairing. Same seed -> identical video. */
-export const SEED = 0x5e7e1e55;
-
-/** Sphere centre as a fraction of width / height, radius as a fraction of height.
- *  The subject sits in the right ~45% so the headline on the left stays clear. */
-export const SPHERE_CX = 0.72;
-export const SPHERE_CY = 0.5;
-export const SPHERE_R = 0.38;
-
-/** Rotation axis lean in the picture plane (degrees, clockwise from vertical). */
-export const TILT_DEG = 15;
-/** Extra tip of the axis toward the viewer (degrees) so the north cap shows a little. */
-export const TIP_DEG = 10;
-
-/** Number of fixed nodes on the surface, and great-circle arcs between node pairs. */
-export const NODE_COUNT = 24;
-export const ARC_COUNT = 6;
-/** Arcs attached to the node that fails (taken from ARC_COUNT). */
-export const FAIL_NODE_ARCS = 2;
-/** Pulse speed per arc, in whole trips per loop (integers keep the loop seamless). */
-export const PULSE_TRIPS = [1, 2, 1, 3, 2, 1];
-
-/** Node and arc sizes as angles on the unit sphere (radians).
- *  At R = 205px: node core ~14px radius, arc line ~11px wide, pulse ~16px wide. */
-export const NODE_RADIUS = 0.07;
-export const ARC_HALF_WIDTH = 0.028;
-export const PULSE_HALF_WIDTH = 0.04;
-export const PULSE_LENGTH = 0.11;
-
-/** Failure timeline, in seconds from the loop start. One node per loop:
- *  dims over FAIL_DIM_S, holds black for FAIL_DARK_S, then flashes and recovers
- *  over FAIL_FLASH_S. Its arcs fade out over FAIL_ARC_FADE_S and back during the flash.
- *  The whole window must end before SECONDS so it never straddles the loop seam. */
-export const FAIL_START_S = 4.5;
-export const FAIL_DIM_S = 0.3;
-export const FAIL_DARK_S = 1.5;
-export const FAIL_FLASH_S = 0.7;
-export const FAIL_ARC_FADE_S = 0.4;
-/** Longitude (degrees, negative = left of centre) the failing node faces at mid-blackout.
- *  The rotation phase is solved so the failure always lands on the lit front face. */
-export const FAIL_FACING_DEG = -15;
-
-/** Left fade: background is untouched right of LEFT_FADE_START (fraction of width)
- *  and eases to pure black by LEFT_FADE_END. */
-export const LEFT_FADE_START = 0.45;
-export const LEFT_FADE_END = 0.2;
-
-/** Background noise level and amplitude (0..1 luminance). Kept very low. */
-export const BG_LEVEL = 0.018;
-export const BG_AMPLITUDE = 0.03;
-
-/** Light direction (view space, x right, y up, z toward viewer): upper left. */
-const LIGHT = normalize([-0.55, 0.62, 0.56]);
-
-// ---------------------------------------------------------------------------
-// Derived timing, exported so the ASCII preview can pick representative frames
-// ---------------------------------------------------------------------------
-
-const FAIL_DARK_START_S = FAIL_START_S + FAIL_DIM_S;
-const FAIL_FLASH_START_S = FAIL_DARK_START_S + FAIL_DARK_S;
-const FAIL_END_S = FAIL_FLASH_START_S + FAIL_FLASH_S;
-if (FAIL_END_S >= SECONDS) throw new Error('Failure window must end before the loop seam');
-
-export const PREVIEW_FRAMES = {
-  normal: Math.round(1.5 * FPS),
-  'failure-dark': Math.round((FAIL_DARK_START_S + FAIL_DARK_S / 2) * FPS),
-  'recovery-flash': Math.round((FAIL_FLASH_START_S + 0.12) * FPS),
-};
-
-// ---------------------------------------------------------------------------
-// Small math helpers
-// ---------------------------------------------------------------------------
-
-function normalize(v) {
-  const l = Math.hypot(v[0], v[1], v[2]);
-  return [v[0] / l, v[1] / l, v[2] / l];
-}
-const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
-const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
-function smoothstep(e0, e1, x) {
-  const t = clamp01((x - e0) / (e1 - e0));
-  return t * t * (3 - 2 * t);
-}
-const frac = (x) => x - Math.floor(x);
+export const ART_WIDTH = 160, ART_HEIGHT = 90;
+export const WIDTH = 960, HEIGHT = 540, FPS = 24, FRAMES = 240;
+export const PALETTE = [[0, 0, 0], [48, 48, 48], [104, 104, 104], [176, 176, 176], [240, 240, 240], [255, 226, 120]];
+export const CONTACT_FRAMES = [0, 48, 90, 114, 132, 138, 144, 192];
+export const FAILURE = { start: 96, recovery: 132, end: 144, facing: -0.75 };
 const TAU = Math.PI * 2;
-const DEG = Math.PI / 180;
-
-/** mulberry32: tiny deterministic PRNG. */
-function mulberry32(seed) {
-  let a = seed >>> 0;
+const CX = ART_WIDTH * 0.72, CY = ART_HEIGHT * 0.5, R = ART_HEIGHT * 0.38;
+const TW = 256, TH = 128;
+const wrap = n => ((n % TW) + TW) % TW;
+function random(seed) {
   return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    seed = (seed + 0x6d2b79f5) >>> 0;
+    let t = Math.imul(seed ^ seed >>> 15, seed | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
 }
-
-// ---------------------------------------------------------------------------
-// Scene: nodes and arcs in body space (fixed for the whole video)
-// ---------------------------------------------------------------------------
-
-function fromLatLon(lat, lon) {
-  return [Math.cos(lat) * Math.sin(lon), Math.sin(lat), Math.cos(lat) * Math.cos(lon)];
-}
-const angleBetween = (a, b) => Math.acos(Math.max(-1, Math.min(1, dot(a, b))));
-
-function buildScene() {
-  const rand = mulberry32(SEED);
-  const nodes = [];
-  // Node 0 is the one that fails: keep it in the northern, lit band.
-  nodes.push(fromLatLon((20 + rand() * 10) * DEG, rand() * TAU));
-  let minSep = 20 * DEG;
-  let tries = 0;
-  while (nodes.length < NODE_COUNT) {
-    const y = (rand() * 2 - 1) * Math.sin(68 * DEG);
-    const p = fromLatLon(Math.asin(y), rand() * TAU);
-    if (nodes.every((n) => angleBetween(n, p) >= minSep)) nodes.push(p);
-    if (++tries % 2000 === 0) minSep *= 0.9;
+const rand = random(0x57a710);
+const texture = new Uint8Array(TW * TH).fill(2);
+function rectangle(x, y, w, h, value) {
+  for (let dy = 0; dy < h; dy++) for (let dx = 0; dx < w; dx++) {
+    if (y + dy >= 0 && y + dy < TH) texture[(y + dy) * TW + wrap(x + dx)] = value;
   }
-
-  const pairs = [];
-  const used = new Set();
-  const key = (i, j) => (i < j ? `${i}-${j}` : `${j}-${i}`);
-  const pick = (candidates) => {
-    // Fisher-Yates with the seeded PRNG, then take the first candidate.
-    for (let i = candidates.length - 1; i > 0; i--) {
-      const j = Math.floor(rand() * (i + 1));
-      [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
-    }
-    return candidates[0];
-  };
-  for (let k = 0; k < FAIL_NODE_ARCS; k++) {
-    const c = [];
-    for (let j = 1; j < NODE_COUNT; j++) {
-      const ang = angleBetween(nodes[0], nodes[j]);
-      if (ang >= 35 * DEG && ang <= 75 * DEG && !used.has(key(0, j))) c.push([0, j]);
-    }
-    const pr = pick(c);
-    used.add(key(...pr));
-    pairs.push(pr);
-  }
-  while (pairs.length < ARC_COUNT) {
-    const c = [];
-    for (let i = 1; i < NODE_COUNT; i++) {
-      for (let j = i + 1; j < NODE_COUNT; j++) {
-        const ang = angleBetween(nodes[i], nodes[j]);
-        if (ang >= 40 * DEG && ang <= 100 * DEG && !used.has(key(i, j))) c.push([i, j]);
-      }
-    }
-    const pr = pick(c);
-    used.add(key(...pr));
-    pairs.push(pr);
-  }
-
-  const arcs = pairs.map(([i, j], k) => ({
-    i,
-    j,
-    omega: angleBetween(nodes[i], nodes[j]),
-    trips: PULSE_TRIPS[k % PULSE_TRIPS.length],
-    offset: k / ARC_COUNT,
-    reverse: k % 2 === 1,
-  }));
-
-  // Solve the rotation phase so node 0 faces FAIL_FACING_DEG at mid-blackout.
-  // Ry(theta) adds theta to body longitude atan2(x, z).
-  const lon0 = Math.atan2(nodes[0][0], nodes[0][2]);
-  const pMid = (FAIL_DARK_START_S + FAIL_DARK_S / 2) / SECONDS;
-  const theta0 = FAIL_FACING_DEG * DEG - lon0 - TAU * pMid;
-
-  return { nodes, arcs, theta0 };
 }
-
-export const SCENE = buildScene();
-
-// ---------------------------------------------------------------------------
-// Per-frame state
-// ---------------------------------------------------------------------------
-
-/** Body -> view: v = Rz(-tilt) . Rx(tip) . Ry(theta) . b */
-function makeTransform(theta) {
-  const ct = Math.cos(theta), st = Math.sin(theta);
-  const cp = Math.cos(TIP_DEG * DEG), sp = Math.sin(TIP_DEG * DEG);
-  const cz = Math.cos(-TILT_DEG * DEG), sz = Math.sin(-TILT_DEG * DEG);
-  return (b) => {
-    // Ry(theta)
-    let x = b[0] * ct + b[2] * st;
-    let y = b[1];
-    let z = -b[0] * st + b[2] * ct;
-    // Rx(tip): tips the north pole toward the viewer
-    const y2 = y * cp + z * sp;
-    const z2 = -y * sp + z * cp;
-    y = y2; z = z2;
-    // Rz(-tilt): leans the axis clockwise in the picture plane
-    const x3 = x * cz - y * sz;
-    const y3 = x * sz + y * cz;
-    return [x3, y3, z];
-  };
+// Overlapping blocks avoid continuous latitude seams or an equatorial groove.
+for (let i = 0; i < 270; i++) {
+  const x = Math.floor(rand() * TW), y = Math.floor(rand() * TH);
+  const w = 3 + Math.floor(rand() * 14), h = 2 + Math.floor(rand() * 8);
+  rectangle(x, y, w, h, rand() < 0.48 ? 2 : 3);
+  if (i % 7 === 0) for (let v = 0; v < 3; v++) rectangle(x + v * 2, y, 1, Math.min(h, 4), 1);
 }
-
-/** Failure envelope at time t (seconds): node health h (1 = normal, 0 = black),
- *  flash intensity f, arc visibility a for arcs touching the failed node. */
-export function failureState(t) {
-  let h = 1, f = 0, a = 1;
-  if (t >= FAIL_START_S && t < FAIL_END_S) {
-    if (t < FAIL_DARK_START_S) h = 1 - smoothstep(FAIL_START_S, FAIL_DARK_START_S, t);
-    else if (t < FAIL_FLASH_START_S) h = 0;
-    else {
-      const u = (t - FAIL_FLASH_START_S) / FAIL_FLASH_S;
-      h = smoothstep(0, 0.35, u);
-      f = smoothstep(0, 0.08, u) * (1 - u) * (1 - u);
-    }
-    if (t < FAIL_FLASH_START_S) a = 1 - smoothstep(FAIL_START_S, FAIL_START_S + FAIL_ARC_FADE_S, t);
-    else a = smoothstep(FAIL_FLASH_START_S, FAIL_END_S, t);
-  }
-  return { h, f, a };
+export const clusters = Array.from({ length: 8 }, (_, i) => ({
+  lon: i * TAU / 8 + (rand() - 0.5) * 0.2,
+  lat: i === 0 ? -0.65 : (rand() - 0.5) * 1.65,
+}));
+export const lights = clusters.flatMap((cluster, district) => Array.from({ length: 8 }, (_, order) => ({
+  lon: cluster.lon + (order % 3 - 1) * 0.095 + (rand() - 0.5) * 0.04,
+  lat: cluster.lat + (Math.floor(order / 3) - 1) * 0.085 + (rand() - 0.5) * 0.035,
+  district, order, frequency: 2 + Math.floor(rand() * 4), phase: rand(),
+})));
+const stars = Array.from({ length: 34 }, () => ({
+  x: 73 + Math.floor(rand() * 86), y: 3 + Math.floor(rand() * 84),
+  frequency: 1 + Math.floor(rand() * 3), phase: rand(), twinkle: rand() < 0.3,
+}));
+const antennae = Array.from({ length: 7 }, () => ({ lon: rand() * TAU, lat: (rand() - 0.5) * 2.1 }));
+// At the middle of the 36-frame blackout the failed district faces the night side.
+const theta0 = FAILURE.facing - clusters[0].lon - TAU * ((FAILURE.start + FAILURE.recovery) / 2 / FRAMES);
+function project(lon, lat, theta, radius = R) {
+  const a = lon + theta, c = Math.cos(lat);
+  const x = Math.sin(a) * c, y = Math.sin(lat), z = Math.cos(a) * c;
+  return { x: Math.floor(CX + radius * x), y: Math.floor(CY - radius * y), z, night: 0.88 * x + 0.46 * y + 0.08 * z < 0 };
 }
-
-// ---------------------------------------------------------------------------
-// Renderer
-// ---------------------------------------------------------------------------
-
-const CX = SPHERE_CX * WIDTH;
-const CY = SPHERE_CY * HEIGHT;
-const R = SPHERE_R * HEIGHT;
-const HALF = normalize([LIGHT[0], LIGHT[1], LIGHT[2] + 1]);
-const NODE_REJECT = Math.cos(NODE_RADIUS * 3.2);
-const ARC_REJECT = Math.sin(PULSE_HALF_WIDTH * 1.2);
-
-/** Periodic, low-frequency background noise. Each wave has an integer number of
- *  cycles per loop in time, so it returns to its start exactly at p = 1. */
-function background(u, v, p) {
-  const a = Math.sin(TAU * (1.1 * u + 0.6 * v + p) + 1.3);
-  const b = Math.sin(TAU * (0.5 * u - 1.2 * v - 2 * p) + 0.4);
-  const c = Math.sin(TAU * (1.7 * u + 1.9 * v + p) + 2.9);
-  const n = 0.5 + 0.25 * a * b + 0.25 * c * a;
-  return BG_LEVEL + BG_AMPLITUDE * n;
-}
-
-/** Render one frame to an 8-bit gray buffer. `frame` may be FRAMES (seam check). */
-export function renderFrame(frame, out = new Uint8Array(WIDTH * HEIGHT)) {
+export function renderArtFrame(frame) {
   const p = frame / FRAMES;
-  const t = p * SECONDS;
-  const toView = makeTransform(TAU * p + SCENE.theta0);
-  const fail = failureState(t);
-
-  const nodes = SCENE.nodes.map((b, k) => {
-    const v = toView(b);
-    return { v, h: k === 0 ? fail.h : 1, f: k === 0 ? fail.f : 0 };
-  });
-  const arcs = SCENE.arcs.map((arc) => {
-    const av = nodes[arc.i].v;
-    const bv = nodes[arc.j].v;
-    const n = normalize(cross(av, bv));
-    const w = cross(n, av); // in-plane, 90 degrees from a toward b
-    let tp = frac(arc.trips * p + arc.offset);
-    if (arc.reverse) tp = 1 - tp;
-    const alpha = arc.i === 0 || arc.j === 0 ? fail.a : 1;
-    return { av, n, w, omega: arc.omega, tp, alpha };
-  });
-
-  const s = [0, 0, 0];
-  for (let py = 0; py < HEIGHT; py++) {
-    const sy = -(py + 0.5 - CY) / R;
-    const v = (py + 0.5) / HEIGHT;
-    for (let px = 0; px < WIDTH; px++) {
-      const u = (px + 0.5) / WIDTH;
-      const sx = (px + 0.5 - CX) / R;
-      const r2 = sx * sx + sy * sy;
-      const d = Math.sqrt(r2);
-
-      // Outside: background noise plus a soft atmospheric halo.
-      let outside = background(u, v, p);
-      if (d > 0.9) outside += 0.16 * Math.exp(-Math.max(0, d - 1) * 9);
-
-      let lum = outside;
-      // Edge coverage, 1px antialiased.
-      const cover = clamp01((1 - d) * R + 0.5);
-      if (cover > 0) {
-        const sz = Math.sqrt(Math.max(0, 1 - Math.min(r2, 1)));
-        const inv = 1 / Math.max(1e-6, Math.hypot(sx, sy, sz));
-        s[0] = sx * inv; s[1] = sy * inv; s[2] = sz * inv;
-
-        // Surface: Lambert + specular + rim.
-        const lam = Math.max(0, dot(s, LIGHT));
-        const spec = Math.pow(Math.max(0, dot(s, HALF)), 28);
-        const rim = Math.pow(1 - s[2], 2.6);
-        let c = 0.03 + 0.6 * lam + 0.36 * spec + 0.34 * rim;
-
-        // Features fade out toward the limb so nothing gets thinner than ~6px.
-        const limb = smoothstep(0.1, 0.38, s[2]);
-        if (limb > 0) {
-          for (const arc of arcs) {
-            if (arc.alpha <= 0) continue;
-            const dp = dot(s, arc.n);
-            if (dp > ARC_REJECT || dp < -ARC_REJECT) continue;
-            const ang = Math.atan2(dot(s, arc.w), dot(s, arc.av));
-            const tt = ang / arc.omega;
-            if (tt < -0.05 || tt > 1.05) continue;
-            const ends = smoothstep(-0.05, 0.02, tt) * (1 - smoothstep(0.98, 1.05, tt));
-            const ad = Math.abs(dp);
-            const line = (1 - smoothstep(ARC_HALF_WIDTH * 0.55, ARC_HALF_WIDTH, ad)) * ends;
-            c += (0.82 - c) * line * 0.6 * arc.alpha * limb;
-            const along = (tt - arc.tp) * arc.omega;
-            const env = Math.sin(Math.PI * arc.tp);
-            const pulse =
-              Math.exp(-(along * along) / (PULSE_LENGTH * PULSE_LENGTH)) *
-              env *
-              (1 - smoothstep(PULSE_HALF_WIDTH * 0.5, PULSE_HALF_WIDTH, ad)) *
-              ends;
-            c += (1 - c) * pulse * arc.alpha * limb;
-          }
-          for (const node of nodes) {
-            const cd = dot(s, node.v);
-            if (cd < NODE_REJECT) continue;
-            const dist = Math.sqrt(Math.max(0, 2 - 2 * cd)); // chord ~ angle
-            const nr = NODE_RADIUS;
-            // Dark ring separates the bright dot from a lit surface.
-            const ring = smoothstep(nr * 0.95, nr * 1.15, dist) * (1 - smoothstep(nr * 1.45, nr * 1.8, dist));
-            c *= 1 - 0.7 * ring * node.h * limb;
-            // While failed, a wider crater of black replaces the dot and its ring.
-            c *= 1 - 0.92 * (1 - node.h) * (1 - smoothstep(nr * 1.3, nr * 2, dist)) * limb;
-            const core = 1 - smoothstep(nr * 0.7, nr, dist);
-            // A failed node goes to black (h = 0) and then flashes on recovery.
-            c += (0.97 * node.h - c) * core * limb;
-            if (node.f > 0) {
-              const spread = nr * (1.4 + 1.6 * (1 - node.f));
-              c += (1 - c) * node.f * Math.exp(-(dist * dist) / (spread * spread)) * limb;
-            }
-          }
-        }
-        lum = outside + (c - outside) * cover;
-      }
-
-      // Left fade over everything, so the headline area stays black.
-      lum *= smoothstep(LEFT_FADE_END, LEFT_FADE_START, u);
-      out[py * WIDTH + px] = Math.round(clamp01(lum) * 255);
+  const theta = TAU * p + theta0;
+  const pixels = new Uint8Array(ART_WIDTH * ART_HEIGHT);
+  const put = (x, y, value) => {
+    if (x >= 72 && x < ART_WIDTH && y >= 0 && y < ART_HEIGHT) pixels[y * ART_WIDTH + x] = value;
+  };
+  for (const star of stars) {
+    if (!star.twinkle || Math.cos(TAU * (star.frequency * p + star.phase)) > -0.8) put(star.x, star.y, 4);
+  }
+  for (const stub of antennae) {
+    const base = project(stub.lon, stub.lat, theta);
+    if (base.z < 0 || base.z > 0.24) continue;
+    for (let n = 0; n < 3; n++) {
+      const point = project(stub.lon, stub.lat, theta, R + n);
+      put(point.x, point.y, base.night ? 1 : 2);
     }
   }
-  return out;
+  for (let y = 0; y < ART_HEIGHT; y++) for (let x = 0; x < ART_WIDTH; x++) {
+    const nx = (x + 0.5 - CX) / R, ny = (CY - y - 0.5) / R;
+    const rr = nx * nx + ny * ny;
+    if (rr > 1) continue;
+    const nz = Math.sqrt(1 - rr);
+    const longitude = Math.atan2(nx, nz) - theta;
+    const tx = wrap(Math.floor(longitude / TAU * TW));
+    const ty = Math.min(TH - 1, Math.floor((0.5 - Math.asin(ny) / Math.PI) * TH));
+    const panel = texture[ty * TW + tx];
+    const light = 0.88 * nx + 0.46 * ny + 0.08 * nz;
+    // Only the immediate one-art-pixel terminator band is dithered.
+    const night = light < (((x + y) & 1) ? -0.012 : 0.012);
+    pixels[y * ART_WIDTH + x] = night ? 1 : panel;
+  }
+  for (const light of lights) {
+    const point = project(light.lon, light.lat, theta);
+    if (point.z <= 0.12) continue;
+    const recovery = (frame - FAILURE.recovery) / (FAILURE.end - FAILURE.recovery);
+    const failed = light.district === 0 && frame >= FAILURE.start && frame < FAILURE.end;
+    if (failed && (recovery < 0 || light.order >= Math.floor(recovery * 8))) continue;
+    const flash = light.district === 0 && frame === FAILURE.end;
+    // Integer frequency and seeded phase keep every twinkle periodic at the seam.
+    if (!flash && !failed && Math.cos(TAU * (light.frequency * p + light.phase)) < -0.96) continue;
+    put(point.x, point.y, point.night ? 5 : 3);
+    // A single small white flash, rather than a halo, marks full recovery.
+    if (flash && light.order === 3) put(point.x + 1, point.y, 4);
+  }
+  const rgb = new Uint8Array(ART_WIDTH * ART_HEIGHT * 3);
+  for (let i = 0; i < pixels.length; i++) rgb.set(PALETTE[pixels[i]], i * 3);
+  return rgb;
 }
-
-// ---------------------------------------------------------------------------
-// Main: render, encode, report
-// ---------------------------------------------------------------------------
-
-function run(cmd, args, stdinWriter) {
-  return new Promise((resolve, reject) => {
-    const child = spawn(cmd, args, { stdio: [stdinWriter ? 'pipe' : 'ignore', 'ignore', 'pipe'] });
-    let err = '';
-    child.stderr.on('data', (d) => (err += d));
+export function renderFrame(frame) {
+  const art = renderArtFrame(frame), rgb = new Uint8Array(WIDTH * HEIGHT * 3);
+  for (let y = 0; y < HEIGHT; y++) for (let x = 0; x < WIDTH; x++) {
+    const source = (Math.floor(y / 6) * ART_WIDTH + Math.floor(x / 6)) * 3;
+    rgb.set(art.subarray(source, source + 3), (y * WIDTH + x) * 3);
+  }
+  return rgb;
+}
+export async function ffmpeg(args, writer) {
+  const child = spawn('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', ...args], { stdio: [writer ? 'pipe' : 'ignore', 'ignore', 'pipe'] });
+  let stderr = '';
+  child.stderr.on('data', data => stderr += data);
+  const done = new Promise((resolve, reject) => {
     child.on('error', reject);
-    child.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`${cmd} exited ${code}\n${err}`))));
-    if (stdinWriter) stdinWriter(child.stdin).catch(reject);
+    child.on('close', code => code === 0 ? resolve() : reject(new Error(`ffmpeg exited ${code}: ${stderr}`)));
   });
+  if (writer) await writer(child.stdin);
+  await done;
 }
-
-const sha256 = (buf) => createHash('sha256').update(buf).digest('hex');
-const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`;
-
 async function main() {
-  const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-  const outDir = join(root, 'assets-src');
-  const mp4 = join(outDir, 'hero.mp4');
-  const gif = join(outDir, 'hero-preview.gif');
-  mkdirSync(outDir, { recursive: true });
-
-  const started = performance.now();
-  const rawHash = createHash('sha256');
-  let first = null;
-
-  await run(
-    'ffmpeg',
-    [
-      '-hide_banner', '-loglevel', 'error', '-y',
-      '-f', 'rawvideo', '-pix_fmt', 'gray', '-s', `${WIDTH}x${HEIGHT}`, '-r', String(FPS), '-i', '-',
-      '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '20', '-an',
-      '-movflags', '+faststart', '-map_metadata', '-1',
-      '-fflags', '+bitexact', '-flags:v', '+bitexact',
-      mp4,
-    ],
-    async (stdin) => {
-      for (let f = 0; f < FRAMES; f++) {
-        const buf = renderFrame(f);
-        if (f === 0) first = Buffer.from(buf);
-        rawHash.update(buf);
-        if (!stdin.write(buf)) await new Promise((r) => stdin.once('drain', r));
-      }
-      stdin.end();
-    },
-  );
-  const renderMs = performance.now() - started;
-
-  // Seam self-check: render p = 240/240 directly (no modulo) and compare bytes to frame 0.
-  const seam = renderFrame(FRAMES);
-  let seamDiff = 0, seamMax = 0;
-  for (let i = 0; i < seam.length; i++) {
-    const d = Math.abs(seam[i] - first[i]);
-    if (d) { seamDiff++; if (d > seamMax) seamMax = d; }
-  }
-
-  const gifStart = performance.now();
-  await run('ffmpeg', [
-    '-hide_banner', '-loglevel', 'error', '-y', '-i', mp4,
-    '-vf', 'fps=12,scale=480:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=64[p];[b][p]paletteuse=dither=none',
-    '-loop', '0', '-fflags', '+bitexact', gif,
-  ]);
-  const gifMs = performance.now() - gifStart;
-
-  const rel = (f) => relative(root, f);
-  console.log(`node ${process.version}`);
-  console.log(`rendered ${FRAMES} frames ${WIDTH}x${HEIGHT}@${FPS} in ${(renderMs / 1000).toFixed(1)}s (incl. encode); gif ${(gifMs / 1000).toFixed(1)}s`);
-  console.log(`seam: frame ${FRAMES} vs frame 0 -> ${seamDiff} differing pixels (max delta ${seamMax})`);
-  console.log(`raw  sha256 ${rawHash.digest('hex')}`);
-  for (const f of [mp4, gif]) {
-    console.log(`${rel(f).padEnd(28)} ${mb(statSync(f).size).padStart(9)}  sha256 ${sha256(readFileSync(f))}`);
-  }
-  console.log(`failure node arcs: ${SCENE.arcs.filter((a) => a.i === 0 || a.j === 0).length}; preview frames ${JSON.stringify(PREVIEW_FRAMES)}`);
-}
-
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().catch((e) => {
-    console.error(e);
-    process.exit(1);
+  const root = fileURLToPath(new URL('../../', import.meta.url));
+  const source = `${root}assets-src/hero.mp4`, gif = `${root}assets-src/hero-preview.gif`;
+  const webm = `${root}public/video/hero.webm`, mp4 = `${root}public/video/hero.mp4`, poster = `${root}public/video/hero-poster.webp`;
+  await mkdir(`${root}assets-src`, { recursive: true });
+  await mkdir(`${root}public/video`, { recursive: true });
+  const start = performance.now();
+  const first = renderFrame(0), seam = renderFrame(FRAMES);
+  let differences = 0;
+  for (let i = 0; i < first.length; i += 3) if (first[i] !== seam[i] || first[i + 1] !== seam[i + 1] || first[i + 2] !== seam[i + 2]) differences++;
+  console.log(`seam: frame 240 vs frame 0: ${differences} differing pixels`);
+  if (differences) throw new Error('Loop seam mismatch');
+  const hash = createHash('sha256');
+  await ffmpeg(['-f', 'rawvideo', '-pix_fmt', 'rgb24', '-s', '960x540', '-r', '24', '-i', '-', '-an', '-c:v', 'libx264', '-qp', '0', '-pix_fmt', 'yuv444p', '-threads', '1', '-map_metadata', '-1', '-fflags', '+bitexact', '-flags:v', '+bitexact', '-movflags', '+faststart', source], async stdin => {
+    for (let frame = 0; frame < FRAMES; frame++) {
+      const rgb = renderFrame(frame);
+      hash.update(rgb);
+      if (!stdin.write(rgb)) await once(stdin, 'drain');
+    }
+    stdin.end();
   });
+  const input = ['-i', source, '-an', '-sws_flags', 'neighbor', '-vf', 'scale=320:180:flags=neighbor', '-r', '24', '-frames:v', '240', '-map_metadata', '-1', '-fflags', '+bitexact', '-flags:v', '+bitexact'];
+  await ffmpeg([...input, '-c:v', 'libvpx-vp9', '-lossless', '1', '-pix_fmt', 'yuv444p', '-threads', '1', webm]);
+  await ffmpeg([...input, '-c:v', 'libx264', '-crf', '12', '-pix_fmt', 'yuv420p', '-threads', '1', '-movflags', '+faststart', mp4]);
+  const encoders = spawnSync('ffmpeg', ['-hide_banner', '-encoders'], { encoding: 'utf8' });
+  if (encoders.stdout.includes('libwebp')) {
+    await ffmpeg(['-i', source, '-sws_flags', 'neighbor', '-vf', 'scale=320:180:flags=neighbor', '-frames:v', '1', '-c:v', 'libwebp', '-lossless', '1', poster]);
+  } else {
+    // Homebrew's minimal ffmpeg omits WebP; use its installed companion encoder.
+    const png = `${root}assets-src/hero-poster.png`;
+    await ffmpeg(['-i', source, '-vf', 'scale=320:180:flags=neighbor', '-frames:v', '1', png]);
+    const result = spawnSync('cwebp', ['-quiet', '-lossless', png, '-o', poster]);
+    if (result.status !== 0) throw new Error(`Poster needs ffmpeg with libwebp or cwebp: ${result.stderr}`);
+  }
+  await ffmpeg(['-i', source, '-vf', 'fps=12,scale=480:270:flags=neighbor,split[a][b];[a]palettegen=max_colors=8[p];[b][p]paletteuse=dither=none', '-loop', '0', '-fflags', '+bitexact', gif]);
+  console.log(`Node ${process.version}; ${FRAMES} frames; render + all encodes ${((performance.now() - start) / 1000).toFixed(2)}s`);
+  console.log(`raw sha256 ${hash.digest('hex')}`);
+  for (const file of [source, gif, webm, mp4, poster]) {
+    const size = (await stat(file)).size;
+    if ((file === webm || file === mp4) && size > 1_500_000) throw new Error(`${file} exceeds 1.5MB`);
+    console.log(`${file.slice(root.length)}: ${size} bytes; sha256 ${createHash('sha256').update(await readFile(file)).digest('hex')}`);
+  }
 }
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch(error => { console.error(error); process.exitCode = 1; });
