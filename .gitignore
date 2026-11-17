@@ -146,5 +146,5 @@ node_modules
 .agents
 skills-lock.json
 
-# Procedurally rendered source media (regenerate with npm run video:hero)
+# Source media for public/video: rendered by npm run video:hero, not committed
 assets-src/
