@@ -64,19 +64,20 @@ Read-mode site, so motion explains state and continuity; one authored moment (`p
 - **Feedback:** the highlighter swipe on links; the More/menu panel drops in (180ms).
 - **Reduced motion:** no animations or transitions; highlights and states change instantly, and the loop shows its final state.
 
-### Hero pixel station
+### Hero thinking grid
 
-The home band plays an original 10s pixel-art station loop. A sphere sits at 72% width and 50% height, with a radius of 38% of the frame height. A hard upper-right day/night split divides irregular panel rectangles, small vents and antenna stubs. There is no dish, crater or equatorial groove. Sixty-four single-pixel windows in eight seeded city clusters rotate exactly once per loop. One district blacks out for 1.5s, relights window by window over 0.5s and flashes once. Its rotation phase keeps it visible on the night side throughout recovery. Sparse periodic stars occupy only the right 55%; the left 45% stays pure black.
+The home band is a live 16px dot grid drawn on canvas (`src/scripts/hero-grid.ts`). It aligns with the CSS `--dot` grid and replaces it once ready (`.grid-ready`). The grid visualises thinking: ideas spark, branch into possibilities, prune and settle on an answer.
 
-`scripts/video/render-hero.mjs` uses seeded plain Node 24 and pipes RGB frames to ffmpeg. The artwork has six values: black, hull grays `#303030`, `#686868`, `#b0b0b0`, star white `#f0f0f0`, and sunflower `#ffe278`. Its 160×90 art grid expands by nearest neighbour to a lossless 960×540 yuv444p source. `npm run video:hero` also makes a GIF, the 320×180 web encodes and a lossless first-frame WebP. It needs ffmpeg with libx264/libvpx-vp9, plus libwebp or the installed `cwebp` companion for the poster. VP9 uses lossless yuv444p because H.264 yuv420p interpolates yellow edges; the H.264 file remains the compatibility fallback. Both contain all 240 frames at 24fps. Source media stays in ignored `assets-src/`.
+- **Swell:** two slow sine fields drift across the grid. Each dot varies between about 0.45× and 1.55× of the `--dot` alpha, and a few random dots flicker as background chatter.
+- **Thoughts:** at least three are always in flight (up to four on desktop), started a beat apart. Each seed lands in the least busy third of the band, clear of the text.
+  - A seed sparks a small ring.
+  - It fans out in 3–4 directions, then each tip splits into zero to three curved sub-branches every 120ms (140ms on phones), down to a depth of 5–8 (4–5 on phones).
+  - When growth stops, it picks one of the deepest ideas and traces the path back from the root with a travelling pulse. Rejected branches recede over 1.6s.
+  - The answer lands as a sunflower block and ring, holds, then the whole thought fades.
+- **Pointer:** on fine pointers, dots within 88px of the cursor lift and push out by up to 3px. Pressing empty space sends a sunflower ring and seeds a thought there, with at most three at a time. Links, buttons, the h1, kicker and paragraphs never start one.
+- **Text:** every mark fades to 25% within the headline and kicker, with a 28px feather. Branches avoid the faded zone.
 
-The hidden video is sampled once per art texel, then cover-cropped around the station into device-aligned 8px blocks, or 6px below 760px. Yellow texels use `--accent`; white stars use `--ink`; black is empty. Hull grays use three ink alpha steps, 30%, 65% and 100% of a 0.35 desktop or 0.55 phone base. Light mode maps shadow to the highest alpha and lit hull to the lowest; dark mode reverses that mapping. Yellow windows use full alpha. Every mark fades to 12% of its normal opacity within the headline and kicker, with a 24px feather. One Path2D fill per colour/alpha bucket keeps styles out of the per-cell loop.
-
-Pressing empty space sends a 0.35px/ms ring outward for 900ms with a 24px band. Hull blocks lift one alpha step, shadow blocks briefly become low-alpha sunflower, and the origin is a solid sunflower block. At most four rings run together. Links, buttons, the h1, kicker and paragraphs never start one.
-
-Rendering follows `requestVideoFrameCallback`, with a 24fps rAF fallback, caps DPR at 2, debounces resize by 150ms, and pauses offscreen or in hidden tabs. Theme mutations repaint the cached frame. Observer syncs restart frame callbacks even when the video is already playing, avoiding a startup race without a second `playing` event. Reduced motion and Save-Data render the poster once, fetch no video and create no ripple. Blocked video or autoplay also falls back to the poster, where ripples still work. Navigation disposes the video, canvas, observers and events. No JavaScript retains the CSS dot grid, hidden by `.grid-ready` after the first pixel frame.
-
-`scripts/verify-hero-pixel.mjs` checks browser behaviour, theme colours, headline contrast and 4× CPU cost. `scripts/video/verify-hero-pixel.mjs` checks the seam, six-value palette, all 240 frames' left-40% luminance, 6×6 source blocks, all WebM 2×2 blocks, stream formats and night-side recovery. It saves an eight-frame contact sheet, a 4× zoom and JSON measurements under uncommitted `artifacts/hero-pixel/`.
+Dots are batched into twenty quadratic alpha buckets, one Path2D fill each. DPR is capped at 2, resize is debounced by 150ms, theme changes repaint with fresh tokens, and the loop pauses offscreen or in hidden tabs. At 4× CPU throttle a frame costs about 0.5ms at 375px and 2.2ms (p95 2.9ms) at 1440px. Reduced motion removes the canvas and keeps the static CSS grid. Navigation disposes the canvas, observers and listeners.
 
 ## Verification
 
