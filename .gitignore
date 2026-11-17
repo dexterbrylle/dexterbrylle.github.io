@@ -146,5 +146,5 @@ node_modules
 .agents
 skills-lock.json
 
-# Source media for public/video (supplied separately, not committed)
+# Source media for public/video: rendered by npm run video:hero, not committed
 assets-src/
