@@ -1,16 +1,13 @@
 export {};
 
-// Home hero: a looping grayscale video rendered live as Geist Mono ASCII on the
-// band canvas. The <video> is never shown; each frame is sampled at one pixel
-// per character cell, mapped to a 10-step ramp and drawn from a glyph atlas.
+// The hidden station video is classified into theme-aware, device-aligned blocks.
 
-const RAMP = " .:-=+*#%@";
 const VIDEO = [["/video/hero.webm", "video/webm"], ["/video/hero.mp4", "video/mp4"]] as const;
 const POSTER = "/video/hero-poster.webp";
 /** Where the subject sits in the source frame; cover-cropping keeps it in view. */
 const FOCUS_X = 0.72, FOCUS_Y = 0.5;
 const FADE_FLOOR = 0.12, FADE_FEATHER = 24, ALPHA_LEVELS = 8;
-const RIPPLE_SPEED = 0.35, RIPPLE_LIFE = 900, RIPPLE_BAND = 24, RIPPLE_SHIFT = 6, RIPPLE_MAX = 4;
+const RIPPLE_SPEED = 0.35, RIPPLE_LIFE = 900, RIPPLE_BAND = 24, RIPPLE_MAX = 4;
 const FRAME_MS = 1000 / 24;
 const IGNORE = "a, button, h1, .kicker, p";
 
@@ -19,14 +16,6 @@ type VideoWithFrames = HTMLVideoElement & {
   requestVideoFrameCallback?: (callback: () => void) => number;
   cancelVideoFrameCallback?: (handle: number) => void;
 };
-
-/** Luminance byte -> ramp index, with a mild black lift, gamma and contrast. */
-const LEVEL = new Uint8Array(256);
-for (let v = 0; v < 256; v++) {
-  let l = Math.max(0, (v / 255 - 0.03) / 0.97) ** 0.9;
-  l = Math.min(1, Math.max(0, 0.5 + (l - 0.5) * 1.1));
-  LEVEL[v] = Math.min(RAMP.length - 1, Math.floor(l * RAMP.length));
-}
 
 let dispose = () => {};
 
@@ -39,22 +28,22 @@ function init() {
   const context = canvas.getContext("2d");
   const sampler = new OffscreenCanvas(1, 1);
   const samplerContext = sampler.getContext("2d", { willReadFrequently: true });
-  const atlas = new OffscreenCanvas(1, 1);
-  const atlasContext = atlas.getContext("2d");
-  if (!context || !samplerContext || !atlasContext) return;
-  const ctx = context, sample = samplerContext, glyphs = atlasContext;
+  if (!context || !samplerContext) return;
+  const ctx = context, sample = samplerContext;
   canvas.ariaHidden = "true";
 
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
-  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+  const connection = "connection" in navigator ? navigator.connection : null;
+  const saveData = typeof connection === "object" && connection !== null && "saveData" in connection && connection.saveData === true;
   const animated = !motion.matches && !saveData;
   const events = new AbortController();
   const { signal } = events;
 
-  let width = 0, height = 0, dpr = 1, cellW = 9, cellH = 16, cellWD = 18, cellHD = 32, columns = 0, rows = 0;
-  let ink = "", accent = "";
+  let width = 0, height = 0, dpr = 1, cellW = 8, cellH = 8, cellWD = 16, cellHD = 16, columns = 0, rows = 0;
+  let ink = "", accent = "", dark = false, base = 0.35;
+  let bucketAlphas: number[] = [];
   let alphaLevel = new Uint8Array(0);
-  let luma = new Uint8Array(0);
+  let texels = new Uint8Array(0);
   let poster: HTMLImageElement | null = null;
   let video: VideoWithFrames | null = null;
   let playing = false, visible = true, dead = false, ready = false;
@@ -84,23 +73,17 @@ function init() {
     }
   }
 
-  /** One row of the 10 ramp glyphs per alpha level, in --ink, at device resolution. */
-  function paintAtlas() {
+  function colours() {
     const style = getComputedStyle(band);
     ink = style.getPropertyValue("--ink").trim();
     accent = style.getPropertyValue("--accent").trim();
-    const mono = style.getPropertyValue("--mono").trim() || "monospace";
-    const base = width < 760 ? 0.55 : 0.35;
-    atlas.width = cellWD * RAMP.length;
-    atlas.height = cellHD * ALPHA_LEVELS;
-    glyphs.clearRect(0, 0, atlas.width, atlas.height);
-    glyphs.font = `400 ${Math.round(cellHD * 0.8)}px ${mono}`;
-    glyphs.textAlign = "center";
-    glyphs.textBaseline = "middle";
-    glyphs.fillStyle = ink;
-    for (let level = 0; level < ALPHA_LEVELS; level++) {
-      glyphs.globalAlpha = base * (FADE_FLOOR + (1 - FADE_FLOOR) * (level / (ALPHA_LEVELS - 1)));
-      for (let i = 1; i < RAMP.length; i++) glyphs.fillText(RAMP[i], (i + 0.5) * cellWD, (level + 0.5) * cellHD);
+    dark = document.documentElement.dataset.theme === "dark";
+    base = width < 760 ? 0.55 : 0.35;
+    bucketAlphas = [];
+    for (const alpha of [base * 0.3, base * 0.65, base, base, 1, 0.18]) {
+      for (let fade = 0; fade < ALPHA_LEVELS; fade++) {
+        bucketAlphas.push(alpha * (FADE_FLOOR + (1 - FADE_FLOOR) * fade / (ALPHA_LEVELS - 1)));
+      }
     }
   }
 
@@ -109,39 +92,45 @@ function init() {
     height = band.clientHeight;
     dpr = Math.min(devicePixelRatio || 1, 2);
     const small = width < 760;
-    cellWD = Math.round((small ? 7 : 9) * dpr);
-    cellHD = Math.round((small ? 12 : 16) * dpr);
+    cellWD = Math.round((small ? 6 : 8) * dpr);
+    cellHD = cellWD;
     cellW = cellWD / dpr;
     cellH = cellHD / dpr;
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     columns = Math.ceil(canvas.width / cellWD);
     rows = Math.ceil(canvas.height / cellHD);
-    sampler.width = columns;
-    sampler.height = rows;
-    sample.imageSmoothingEnabled = true;
-    sample.imageSmoothingQuality = "high";
-    luma = new Uint8Array(columns * rows);
+    sampler.width = 160;
+    sampler.height = 90;
+    sample.imageSmoothingEnabled = false;
+    texels = new Uint8Array(columns * rows);
     fades();
-    paintAtlas();
+    colours();
   }
 
   // ---------- sampling ----------
 
-  /** Draw the source into the cell-sized sampler with object-fit: cover, then read luminance. */
+  /** Read one texel per art pixel, then cover-crop with the existing subject focus. */
   function read(source: CanvasImageSource, sourceWidth: number, sourceHeight: number) {
     if (!sourceWidth || !sourceHeight || !columns) return false;
     const scale = Math.max(width / sourceWidth, height / sourceHeight);
     const w = width / scale, h = height / scale;
     const sx = Math.min(Math.max(FOCUS_X * sourceWidth - w / 2, 0), sourceWidth - w);
     const sy = Math.min(Math.max(FOCUS_Y * sourceHeight - h / 2, 0), sourceHeight - h);
-    // The sampler grid covers whole cells, which can run a fraction past the band edge.
-    const cw = (columns * cellW) / scale, ch = (rows * cellH) / scale;
-    sample.clearRect(0, 0, columns, rows);
-    sample.drawImage(source, sx, sy, cw, ch, 0, 0, columns, rows);
-    const data = sample.getImageData(0, 0, columns, rows).data;
-    for (let i = 0, p = 0; i < luma.length; i++, p += 4) {
-      luma[i] = (data[p] * 54 + data[p + 1] * 183 + data[p + 2] * 19) >> 8;
+    sample.clearRect(0, 0, 160, 90);
+    sample.drawImage(source, 0, 0, sourceWidth, sourceHeight, 0, 0, 160, 90);
+    const data = sample.getImageData(0, 0, 160, 90).data;
+    for (let row = 0, i = 0; row < rows; row++) {
+      const y = Math.min(89, Math.floor((sy + (row + 0.5) * cellH / scale) / sourceHeight * 90));
+      for (let column = 0; column < columns; column++, i++) {
+        const x = Math.min(159, Math.floor((sx + (column + 0.5) * cellW / scale) / sourceWidth * 160));
+        const p = (y * 160 + x) * 4;
+        const r = data[p], g = data[p + 1], b = data[p + 2];
+        // Broad thresholds tolerate the 4:2:0 H.264 fallback's chroma rounding.
+        texels[i] = r > 185 && g > 165 && b < 165 && r - b > 65 ? 5
+          : r > 210 && g > 210 && b > 210 ? 4
+          : r > 140 ? 3 : r > 76 ? 2 : r > 22 ? 1 : 0;
+      }
     }
     return true;
   }
@@ -151,18 +140,6 @@ function init() {
     return poster ? read(poster, poster.naturalWidth, poster.naturalHeight) : false;
   }
 
-  /** Bilinear luminance at a band-space point, for ripple displacement. */
-  function lumaAt(x: number, y: number) {
-    const gx = Math.min(Math.max(x / cellW - 0.5, 0), columns - 1);
-    const gy = Math.min(Math.max(y / cellH - 0.5, 0), rows - 1);
-    const x0 = Math.floor(gx), y0 = Math.floor(gy);
-    const x1 = Math.min(x0 + 1, columns - 1), y1 = Math.min(y0 + 1, rows - 1);
-    const fx = gx - x0, fy = gy - y0;
-    const top = luma[y0 * columns + x0] * (1 - fx) + luma[y0 * columns + x1] * fx;
-    const bottom = luma[y1 * columns + x0] * (1 - fx) + luma[y1 * columns + x1] * fx;
-    return Math.round(top * (1 - fy) + bottom * fy);
-  }
-
   // ---------- drawing ----------
 
   function draw(now = performance.now()) {
@@ -170,39 +147,35 @@ function init() {
     ctx.globalAlpha = 1;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     while (ripples.length && now - ripples[0].start > RIPPLE_LIFE) ripples.shift();
-    const rings = ripples.map(r => ({ ...r, radius: (now - r.start) * RIPPLE_SPEED, life: (now - r.start) / RIPPLE_LIFE }));
-
-    for (const ring of rings) {
-      // The tap origin gets one sunflower square behind its glyph.
-      const column = Math.floor(ring.x / cellW), row = Math.floor(ring.y / cellH);
-      const side = Math.min(cellWD, cellHD);
-      ctx.globalAlpha = 0.9 * (1 - ring.life);
-      ctx.fillStyle = accent;
-      ctx.fillRect(column * cellWD, row * cellHD + (cellHD - side) / 2, side, side);
-    }
-    ctx.globalAlpha = 1;
-
-    const half = RIPPLE_BAND / 2;
+    const rings = ripples.map(r => ({ ...r, radius: (now - r.start) * RIPPLE_SPEED }));
+    const paths = Array.from({ length: bucketAlphas.length }, () => new Path2D());
+    const used = new Set<number>();
     for (let row = 0, i = 0; row < rows; row++) {
-      const y = row * cellHD, cy = (row + 0.5) * cellH;
+      const cy = (row + 0.5) * cellH;
       for (let column = 0; column < columns; column++, i++) {
-        let level = LEVEL[luma[i]];
-        if (rings.length) {
-          const cx = (column + 0.5) * cellW;
-          for (const ring of rings) {
-            const dx = cx - ring.x, dy = cy - ring.y;
-            const distance = Math.hypot(dx, dy);
-            const off = Math.abs(distance - ring.radius);
-            if (off > half) continue;
-            const push = distance > 0 ? RIPPLE_SHIFT / distance : 0;
-            level = LEVEL[lumaAt(cx + dx * push, cy + dy * push)] + (off < half / 2 ? 3 : 2);
-            break;
-          }
-          if (level > RAMP.length - 1) level = RAMP.length - 1;
-        }
-        if (!level) continue;
-        ctx.drawImage(atlas, level * cellWD, alphaLevel[i] * cellHD, cellWD, cellHD, column * cellWD, y, cellWD, cellHD);
+        const kind = texels[i];
+        if (!kind) continue;
+        const cx = (column + 0.5) * cellW;
+        const ring = rings.some(r => Math.abs(Math.hypot(cx - r.x, cy - r.y) - r.radius) <= RIPPLE_BAND / 2);
+        let bucket = kind === 5 ? 4 : kind === 4 ? 3 : dark ? kind - 1 : 3 - kind;
+        if (ring && kind <= 3) bucket = kind === 1 ? 5 : Math.min(2, bucket + 1);
+        const index = bucket * ALPHA_LEVELS + alphaLevel[i];
+        paths[index].rect(column * cellWD, row * cellHD, cellWD, cellHD);
+        used.add(index);
       }
+    }
+    for (const index of used) {
+      ctx.fillStyle = index >= 4 * ALPHA_LEVELS ? accent : ink;
+      ctx.globalAlpha = bucketAlphas[index];
+      ctx.fill(paths[index]);
+    }
+    // Origins remain solid blocks; they share a single fill regardless of ring count.
+    if (rings.length) {
+      const origins = new Path2D();
+      for (const ring of rings) origins.rect(Math.floor(ring.x / cellW) * cellWD, Math.floor(ring.y / cellH) * cellHD, cellWD, cellHD);
+      ctx.fillStyle = accent;
+      ctx.globalAlpha = 1;
+      ctx.fill(origins);
     }
     if (!ready) {
       ready = true;
@@ -251,6 +224,8 @@ function init() {
         // AbortError just means a pause() interrupted play(); anything else (autoplay blocked) falls back.
         if (error.name !== "AbortError") fallBack();
       });
+      // An observer can sync an already-playing video without another playing event.
+      if (playing) startFrames();
     } else {
       video.pause();
     }
@@ -276,14 +251,14 @@ function init() {
     element.remove();
   }
 
-  /** Video failed or autoplay is blocked: keep the poster as a static ASCII frame. */
+  /** Video failed or autoplay is blocked: keep the poster as a static pixel frame. */
   function fallBack() {
     releaseVideo();
     if (poster && read(poster, poster.naturalWidth, poster.naturalHeight)) draw();
   }
 
   function createVideo() {
-    const element = document.createElement("video") as VideoWithFrames;
+    const element: VideoWithFrames = document.createElement("video");
     element.muted = true;
     element.defaultMuted = true;
     element.loop = true;
@@ -333,7 +308,7 @@ function init() {
     }, 150);
   });
   const theme = new MutationObserver(() => {
-    paintAtlas();
+    colours();
     draw();
   });
   const intersection = new IntersectionObserver(entries => {
@@ -342,9 +317,6 @@ function init() {
   });
 
   async function start() {
-    if (dead) return;
-    const mono = getComputedStyle(band).getPropertyValue("--mono").trim() || "monospace";
-    await document.fonts.load(`400 13px ${mono}`, RAMP).catch(() => {});
     if (dead) return;
     band.prepend(canvas);
     measure();
