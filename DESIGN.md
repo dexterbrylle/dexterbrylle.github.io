@@ -64,11 +64,13 @@ Read-mode site, so motion explains state and continuity; one authored moment (`p
 - **Feedback:** the highlighter swipe on links; the More/menu panel drops in (180ms).
 - **Reduced motion:** no animations or transitions; highlights and states change instantly, and the loop shows its final state.
 
-### Hero grid
+### Hero ASCII video
 
-The home band illustrates routing around failure on its existing 16px dot grid. Eight ink packets move one cell every 150ms with three fading trail dots; phones below 760px use four packets at 190ms. Every 6–9s a node on a packet's route becomes a quiet ink cross. Packets take grid-aligned detours until it recovers after 3–4s with one 300ms sunflower blink. The blink is the only accent in this illustration. It carries no telemetry or labels.
+The home band plays a 10s grayscale loop (a rotating globe of network nodes, one failing and recovering per loop) as Geist Mono ASCII in `--ink`. The `<video>` (`public/video/hero.webm`, `hero.mp4`) is hidden and only sampled: each frame is drawn at one pixel per character cell (9×16px, 7×12px below 760px) with `object-fit: cover` math focused on the globe, then mapped through a mild gamma/contrast curve to the ramp ` .:-=+*#%@`. Brightness maps to glyph density in both themes, so the clip's black background stays empty paper in light mode and empty ink in dark mode. Glyphs come from a per-theme atlas, at 0.35 alpha (0.55 on phones), and fade to 12% of that within the headline and kicker bounds with a 24px feather.
 
-The canvas reads theme tokens and preserves the CSS grid's center-top alignment. Marks fade to a quarter of their usual opacity within the headline and kicker bounds, with a 24px feather. The grid is cached, rendering is capped at 30fps and 2× pixel density, and animation pauses offscreen or in hidden tabs. It starts after first paint and cleans up on navigation. Reduced motion, including live preference changes, leaves the static CSS dots; no JavaScript also retains that grid.
+Pressing an empty spot in the band sends a ring outward (0.35px/ms, 900ms, 24px band) that displaces the sampled image by 6px and lifts glyphs two or three steps; the origin cell gets one sunflower square. At most four rings run at once. Links, buttons, the h1, the kicker and paragraphs never start one.
+
+Rendering follows the video's frame rate (`requestVideoFrameCallback`, else 24fps rAF), at 2× density at most, and pauses offscreen or in hidden tabs. Reduced motion and Save-Data render the poster (`hero-poster.webp`) once as static ASCII, fetch no video and show no ripple; a failed or blocked video falls back to that still frame, where ripples still work. No JavaScript keeps the CSS dot grid, which `.grid-ready` hides after the first ASCII frame. `scripts/verify-hero-ascii.mjs` checks all of this in a browser.
 
 ## Verification
 
